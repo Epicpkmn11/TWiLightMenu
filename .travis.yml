@@ -25,7 +25,7 @@ install:
   - cd libnds/
   - sudo make install
   - cd ..
-  - rm -r libnds/
+  - sudo rm -r libnds/
   - 
   - export DEVKITPRO=/opt/devkitpro
   - export DEVKITARM=${DEVKITPRO}/devkitARM
