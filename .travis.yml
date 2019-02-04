@@ -23,7 +23,7 @@ install:
   - sudo dkp-pacman -S devkitARM general-tools dstools ndstool libnds libfat-nds grit mmutil --noconfirm
   - git clone https://github.com/RocketRobz/libnds.git
   - cd libnds/
-  - make install
+  - sudo make install
   - cd ..
   - rm -r libnds/
   - 
