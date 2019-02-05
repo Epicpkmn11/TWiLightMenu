@@ -52,7 +52,8 @@ addons:
 deploy:
   provider: releases
   overwrite: true
-  api_key: $GITHUB_KEY
+  user: $GITHUB_NAME
+  password: $GITHUB_PASS
   file:
     - 7zfile/_nds/TWiLightMenu/dsimenu.srldr
   skip_cleanup: true
