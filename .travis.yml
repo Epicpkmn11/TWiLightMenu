@@ -56,5 +56,4 @@ deploy:
   file:
     - 7zfile/_nds/TWiLightMenu/dsimenu.srldr
   skip_cleanup: true
-  on:
-    repo: Epicpk11/TWLBuilds-test
+  repo: Epicpk11/TWLBuilds-test
