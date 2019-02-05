@@ -13,21 +13,21 @@ cp "rungame.nds" "../7zfile/CFW - SDNAND root/title/00030015/534c524e/content/00
 cd ..
 cd "slot1launch"
 make
-cp "slot1launch.nds" "../7zfile/_nds/dsimenuplusplus/slot1launch.srldr"
+cp "slot1launch.nds" "../7zfile/_nds/TWiLightMenu/slot1launch.srldr"
 cd ..
 cd "title"
 make
-cp "title.nds" "../7zfile/_nds/dsimenuplusplus/main.srldr"
+cp "title.nds" "../7zfile/_nds/TWiLightMenu/main.srldr"
 cd ..
 cd "settings"
 make
-cp "settings.nds" "../7zfile/_nds/dsimenuplusplus/settings.srldr"
+cp "settings.nds" "../7zfile/_nds/TWiLightMenu/settings.srldr"
 cd ..
 cd "romsel_dsimenutheme"
 make
-cp "romsel_dsimenutheme.nds" "../7zfile/_nds/dsimenuplusplus/dsimenu.srldr"
+cp "romsel_dsimenutheme.nds" "../7zfile/_nds/TWiLightMenu/dsimenu.srldr"
 cd ..
 cd "romsel_r4theme"
 make
-cp "romsel_r4theme.nds" "../7zfile/_nds/dsimenuplusplus/r4menu.srldr"
+cp "romsel_r4theme.nds" "../7zfile/_nds/TWiLightMenu/r4menu.srldr"
 cd ..

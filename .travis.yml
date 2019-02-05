@@ -49,4 +49,10 @@ addons:
     - libstdc++6
     - lftp
 
-
+deploy:
+  provider: releases
+  overwrite: true
+  api_key: $GITHUB_KEY
+  file:
+    - 7zfile/_nds/TWiLightMenu/dsimenu.srldr
+  skip_cleanup: true
