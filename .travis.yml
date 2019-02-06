@@ -52,10 +52,10 @@ addons:
 deploy:
   provider: releases
   overwrite: true
-  user: $GITHUB_NAME
-  password: $GITHUB_PASS
-  file:
-    - 7zfile/_nds/TWiLightMenu/dsimenu.srldr
-    - romsel_dsimenutheme/romsel_dsimenutheme.nds
+  api_key: $GITHUB_TOKEN
+  file: romsel_dsimenutheme/romsel_dsimenutheme.nds
   skip_cleanup: true
-  repo: Epicpk11/TWLBuilds-test
+  repo: TWLBot/Builds
+  prerelease: true
+  name: TWiLightMenu | $COMMIT_TAG
+  body: $COMMIT_MESSAGE
