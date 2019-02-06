@@ -58,3 +58,4 @@ deploy:
     - 7zfile/_nds/TWiLightMenu/dsimenu.srldr
   skip_cleanup: true
   repo: Epicpk11/TWLBuilds-test
+  branch: master
