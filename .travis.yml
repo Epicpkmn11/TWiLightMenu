@@ -96,6 +96,8 @@ deploy:
   prerelease: true
   name: TWiLightMenu | $COMMIT_TAG
   body: $COMMIT_MESSAGE
+  on:
+    all_branches: true
 
   after_deploy:
   - cd ../../
