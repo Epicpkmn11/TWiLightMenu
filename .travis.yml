@@ -100,7 +100,7 @@ deploy:
     all_branches: true
 
   after_deploy:
-  - cd ../../
+  - cd ../
   - curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh success $WEBHOOK_URL
