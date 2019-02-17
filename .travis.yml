@@ -93,9 +93,12 @@ deploy:
   prerelease: true
   name: TWiLightMenu | $COMMIT_TAG
   body: $COMMIT_MESSAGE
-  all_branches: true
+  on:
+    all_branches: true
 
   after_deploy:
+  on:
+    all_branches: true
   - cd ../
   - curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
