@@ -80,7 +80,7 @@ before_deploy:
   - cp ../TWiLightMenu.7z TWiLightMenu.7z
   - git stage .
   - git commit -m "TWiLightMenu | $COMMIT_TAG"
-  - git push origin master
+  # - git push origin master
   - git tag v$CURRENT_DATE
 
 deploy:
