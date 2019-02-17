@@ -36,6 +36,7 @@ install:
   - 
   - export DEVKITPRO=/opt/devkitpro
   - export DEVKITARM=${DEVKITPRO}/devkitARM
+  - export CURRENT_DATE=$(date +'%Y%m%d-%H%M%S')
 
 script:
   - export COMMIT_TAG="$(git log --format=%h -1)"
@@ -70,12 +71,12 @@ addons:
     - lftp
 
 after_success:
-  - curl -o send.sh https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh success $WEBHOOK_URL
 
 after_failure:
-  - curl -o send.sh https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh failure $WEBHOOK_URL
 
@@ -87,7 +88,6 @@ before_deploy:
   - git stage .
   - git commit -m "TWiLightMenu | $COMMIT_TAG"
   - git push origin master
-  - export CURRENT_DATE=$(date +'%Y%m%d-%H%M%S')
   - git tag v$CURRENT_DATE
 
 deploy:
