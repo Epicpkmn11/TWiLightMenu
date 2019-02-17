@@ -70,10 +70,6 @@ addons:
     - libstdc++6
     - lftp
 
-after_success:
-  - curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/travis-ci-discord-webhook/master/send.sh
-  - chmod +x send.sh
-  - ./send.sh success $WEBHOOK_URL
 
 after_failure:
   - curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/travis-ci-discord-webhook/master/send.sh
@@ -100,3 +96,9 @@ deploy:
   prerelease: true
   name: TWiLightMenu | $COMMIT_TAG
   body: $COMMIT_MESSAGE
+
+  after_deploy:
+  - cd ../../
+  - curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh success $WEBHOOK_URL
