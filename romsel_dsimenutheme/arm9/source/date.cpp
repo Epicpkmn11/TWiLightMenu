@@ -1,6 +1,6 @@
 #include "date.h"
 
-#include "graphics/fontHandler.h"
+#include "graphics/font.h"
 
 #include <ctime>
 #include <cstdio>

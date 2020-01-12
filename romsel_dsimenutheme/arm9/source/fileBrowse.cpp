@@ -40,10 +40,8 @@
 
 #include "SwitchState.h"
 #include "errorScreen.h"
-#include "graphics/FontGraphic.h"
-#include "graphics/TextPane.h"
+#include "graphics/font.h"
 #include "graphics/ThemeTextures.h"
-#include "graphics/fontHandler.h"
 #include "graphics/graphics.h"
 #include "graphics/iconHandler.h"
 #include "iconTitle.h"
@@ -173,7 +171,6 @@ struct TimesPlayed {
 	int amount;
 };
 
-TextEntry *pathText = nullptr;
 char path[PATH_MAX] = {0};
 
 #ifdef EMULATE_FILES
@@ -515,7 +512,6 @@ void displayNowLoading(void) {
 		}
 	}
 	nowLoadingDisplaying = true;
-	reloadFontPalettes();
 	while (!screenFadedIn()) 
 	{
 		snd().updateStream();
@@ -1464,7 +1460,6 @@ string browseForFile(const vector<string> extensionList) {
 		updateDirectoryContents(dirContents[scrn]);
 		getFileInfo(scrn, dirContents, true);
 		reloadIconPalettes();
-		reloadFontPalettes();
 		if (ms().theme != 4) {
 			while (!screenFadedOut());
 		}
@@ -1592,7 +1587,6 @@ string browseForFile(const vector<string> extensionList) {
 							dirContents[scrn].at((CURPOS - 2) + PAGENUM * 40).isDirectory,
 							dirContents[scrn].at((CURPOS - 2) + PAGENUM * 40).name.c_str(),
 							CURPOS - 2);
-						defer(reloadFontTextures);
 					}
 				}
 			} else if (((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) ||
@@ -1620,7 +1614,6 @@ string browseForFile(const vector<string> extensionList) {
 							dirContents[scrn].at((CURPOS + 2) + PAGENUM * 40).isDirectory,
 							dirContents[scrn].at((CURPOS + 2) + PAGENUM * 40).name.c_str(),
 							CURPOS + 2);
-						defer(reloadFontTextures);
 					}
 				}
 				// Move apps
@@ -1691,7 +1684,6 @@ string browseForFile(const vector<string> extensionList) {
 										   .at((CURPOS - 2) + PAGENUM * 40)
 										   .name.c_str(),
 									   CURPOS - 2);
-								defer(reloadFontTextures);
 							}
 						} else if (!edgeBumpSoundPlayed) {
 							snd().playWrong();
@@ -1714,7 +1706,6 @@ string browseForFile(const vector<string> extensionList) {
 										   .at((CURPOS + 2) + PAGENUM * 40)
 										   .name.c_str(),
 									   CURPOS + 2);
-								defer(reloadFontTextures);
 							}
 						} else if (!edgeBumpSoundPlayed) {
 							snd().playWrong();
@@ -1764,7 +1755,6 @@ string browseForFile(const vector<string> extensionList) {
 								swiWaitForVBlank();
 							}
 							reloadIconPalettes();
-							reloadFontPalettes();
 							clearText();
 						} else {
 							snd().playWrong();
@@ -1799,7 +1789,6 @@ string browseForFile(const vector<string> extensionList) {
 								swiWaitForVBlank();
 							}
 							reloadIconPalettes();
-							reloadFontPalettes();
 							clearText();
 						} else {
 							snd().playWrong();

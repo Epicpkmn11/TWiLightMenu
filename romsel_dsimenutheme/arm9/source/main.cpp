@@ -51,7 +51,7 @@
 #include "ndsheaderbanner.h"
 #include "perGameSettings.h"
 
-#include "graphics/fontHandler.h"
+#include "graphics/font.h"
 #include "graphics/iconHandler.h"
 
 #include "common/inifile.h"
@@ -928,11 +928,6 @@ int main(int argc, char **argv) {
 		printLargeCentered(false, (ms().theme == 4 ? 80 : 88), "Now copying data...");
 		printSmallCentered(false, (ms().theme == 4 ? 96 : 104), "Do not turn off the power.");
 		for (int i = 0; i < 15; i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
-		}
-		reloadFontPalettes();
-		for (int i = 0; i < 20; i++) {
 			snd().updateStream();
 			swiWaitForVBlank();
 		}

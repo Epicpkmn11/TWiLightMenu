@@ -32,7 +32,7 @@
 
 #include "ndsheaderbanner.h"
 #include "iconTitle.h"
-#include "graphics/fontHandler.h"
+#include "graphics/font.h"
 #include "graphics/graphics.h"
 #include "graphics/ThemeTextures.h"
 #include "errorScreen.h"

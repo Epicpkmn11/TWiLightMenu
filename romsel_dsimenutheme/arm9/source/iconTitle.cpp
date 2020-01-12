@@ -24,7 +24,7 @@
 #include "common/dsimenusettings.h"
 #include "common/flashcard.h"
 #include "common/gl2d.h"
-#include "graphics/fontHandler.h"
+#include "graphics/font.h"
 #include "graphics/iconHandler.h"
 #include "graphics/queueControl.h"
 #include "graphics/ThemeTextures.h"

@@ -18,7 +18,7 @@
 
 ------------------------------------------------------------------*/
 
-#include "FontGraphic.h"
+#include "font.h"
 #include "common/gl2d.h"
 #include <ctime>
 #include <dirent.h>
@@ -44,7 +44,6 @@
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
 #include "common/lzss.h"
-#include "fontHandler.h"
 #include "graphics.h"
 #include "graphics/ThemeTextures.h"
 #include "themefilenames.h"
@@ -1216,15 +1215,13 @@ void vBlankHandler() {
 				// Reload the dialog box palettes here...
 				reloadDboxPalette();
 			} else if (!showdialogbox) {
-
 				reloadIconPalettes();
-				reloadFontPalettes();
 			}
 			vblankRefreshCounter = 0;
 		} else {
 			vblankRefreshCounter++;
 		}
-		updateText(false);
+		// updateText(false);
 		//}
 	}
 	glEnd2D();
