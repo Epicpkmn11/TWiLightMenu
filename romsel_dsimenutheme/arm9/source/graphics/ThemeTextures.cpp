@@ -1129,6 +1129,8 @@ void ThemeTextures::videoSetup() {
 	int bg3Sub = bgInitSub(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
 	bgSetPriority(bg3Sub, 3);
 
+	bgSetPriority(0, 1); // Set 3D to below text
+
 	uint16_t fontPalette[] = {0, 0xD6B5, 0xB9CE, 0xA108};
 	tonccpy(BG_PALETTE, fontPalette, sizeof(fontPalette));
 	tonccpy(BG_PALETTE_SUB, fontPalette, sizeof(fontPalette));
