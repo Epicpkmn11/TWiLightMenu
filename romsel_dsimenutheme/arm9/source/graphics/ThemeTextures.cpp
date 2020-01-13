@@ -19,6 +19,7 @@
 #include "uvcoord_top_font.h"
 #include "common/lzss.h"
 #include "common/tonccpy.h"
+#include "graphics/font.h"
 #include "graphics/lodepng.h"
 #include "ndsheaderbanner.h"
 
@@ -30,11 +31,14 @@ extern bool showColon;
 
 static u16 _bmpImageBuffer[256 * 192] = {0};
 static u16 _bgMainBuffer[256 * 192] = {0};
-static u16 _bgSubBuffer[256 * 192] = {0};
+u16 _bgSubBuffer[256 * 192] = {0};
 
 static void* boxArtCache = (void*)0x02500000;	// Size: 0x1B8000
 static bool boxArtFound[40] = {false};
 int boxArtType[40] = {0};	// 0: NDS, 1: FDS/GBA/GBC/GB, 2: NES/GEN/MD/SFC, 3: SNES
+
+u16 *bg3Main, *bg3Sub;
+u8 *bg2Main, *bg2Sub;
 
 ThemeTextures::ThemeTextures()
     : previouslyDrawnBottomBg(-1), bubbleTexID(0), bipsTexID(0), scrollwindowTexID(0), buttonarrowTexID(0),
@@ -452,33 +456,33 @@ void ThemeTextures::loadIconTextures() {
 	// }
 }
 u16 *ThemeTextures::beginBgSubModify() {
-	dmaCopyWords(0, BG_GFX_SUB, _bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	dmaCopyWords(0, bg3Sub, _bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	return _bgSubBuffer;
 }
 
 void ThemeTextures::commitBgSubModify() {
 	DC_FlushRange(_bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	dmaCopyWords(2, _bgSubBuffer, BG_GFX_SUB, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	dmaCopyWords(2, _bgSubBuffer, bg3Sub, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 }
 
 void ThemeTextures::commitBgSubModifyAsync() {
 	DC_FlushRange(_bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	dmaCopyWordsAsynch(2, _bgSubBuffer, BG_GFX_SUB, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	dmaCopyWordsAsynch(2, _bgSubBuffer, bg3Sub, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 }
 
 u16 *ThemeTextures::beginBgMainModify() {
-	dmaCopyWords(0, BG_GFX, _bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	dmaCopyWords(0, bg3Main, _bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	return _bgMainBuffer;
 }
 
 void ThemeTextures::commitBgMainModify() {
 	DC_FlushRange(_bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	dmaCopyWords(2, _bgMainBuffer, BG_GFX, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	dmaCopyWords(2, _bgMainBuffer, bg3Main, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 }
 
 void ThemeTextures::commitBgMainModifyAsync() {
 	DC_FlushRange(_bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	dmaCopyWordsAsynch(2, _bgMainBuffer, BG_GFX, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	dmaCopyWordsAsynch(2, _bgMainBuffer, bg3Main, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 }
 
 void ThemeTextures::drawTopBg() {
@@ -503,7 +507,7 @@ void ThemeTextures::drawBottomBg(int index) {
 		previouslyDrawnBottomBg = index;
 	} else {
 		DC_FlushRange(_backgroundTextures[index].texture(), 0x18000);
-		dmaCopyWords(0, _backgroundTextures[index].texture(), BG_GFX, 0x18000);
+		dmaCopyWords(0, _backgroundTextures[index].texture(), bg3Main, 0x18000);
 		LZ77_Decompress((u8*)_backgroundTextures[index].texture(), (u8*)_bgMainBuffer);
 	}
 
@@ -528,10 +532,17 @@ void ThemeTextures::clearTopScreen() {
 }
 
 void ThemeTextures::drawProfileName() {
+	std::u16string str;
+	for(int i=0;i<10;i++) {
+		str += usernameRendered[i];
+	}
+
+	printSmall(true, isDSiMode() ? 27 : 3, 2, str);
+	return;
 	// Load username
 	char fontPath[64] = {0};
 	FILE *file;
-	int x = (isDSiMode() ? 28 : 4);
+	int x = isDSiMode() ? 28 : 4;
 
 	for (int c = 0; c < 10; c++) {
 		unsigned int charIndex = getTopFontSpriteIndex(usernameRendered[c]);
@@ -868,7 +879,7 @@ void ThemeTextures::drawBatteryImageCached() {
 void ThemeTextures::drawTopBgAvoidingShoulders() {
 
 	// Copy current to _bmpImageBuffer
-	dmaCopyWords(0, BG_GFX_SUB, _bmpImageBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	dmaCopyWords(0, bg3Sub, _bmpImageBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 
 	// Throw the entire top background into the sub buffer.
 	LZ77_Decompress((u8*)_backgroundTextures[0].texture(), (u8*)_bgSubBuffer);
@@ -960,35 +971,36 @@ unsigned int ThemeTextures::getDateTimeFontSpriteIndex(const u16 letter) {
 	return spriteIndex;
 }
 
-void ThemeTextures::drawDateTime(const char *str, const int posX, const int posY, const int drawCount,
-				 int *hourWidthPointer) {
-	int x = posX;
-	int screenPosY = (ms().theme == 4 ? 19 : 14);
+void ThemeTextures::drawDateTime(const std::string &str, const int posX) {
+	smallFont.print(true, posX, (ms().theme == 4 ? 10 : 5), str);
+	return;
+	// int x = posX;
+	// int screenPosY = (ms().theme == 4 ? 19 : 14);
 
-	beginBgSubModify();
-	for (int c = 0; c < drawCount; c++) {
-		int imgY = posY;
+	// beginBgSubModify();
+	// for (int c = 0; c < drawCount; c++) {
+	// 	int imgY = posY;
 
-		unsigned int charIndex = getDateTimeFontSpriteIndex(str[c]);
-		// Start date
-		for (int y = screenPosY; y >= screenPosY-8; y--) {
-			for (u16 i = 0; i < date_time_font_texcoords[2 + (4 * charIndex)]; i++) {
-				if (_dateFontImage[(imgY * 128) + (date_time_font_texcoords[0 + (4 * charIndex)] +
-								   i)] != 0x7C1F) { // Do not render magneta pixel
-					_bgSubBuffer[y * 256 + (i + x)] =
-					    _dateFontImage[(imgY * 128) +
-							   (date_time_font_texcoords[0 + (4 * charIndex)] + i)];
-				}
-			}
-			imgY--;
-		}
-		x += date_time_font_texcoords[2 + (4 * charIndex)];
-		if (hourWidthPointer != NULL) {
-			if (c == 2)
-				*hourWidthPointer = x;
-		}
-	}
-	commitBgSubModify();
+	// 	unsigned int charIndex = getDateTimeFontSpriteIndex(str[c]);
+	// 	// Start date
+	// 	for (int y = screenPosY; y >= screenPosY-8; y--) {
+	// 		for (u16 i = 0; i < date_time_font_texcoords[2 + (4 * charIndex)]; i++) {
+	// 			if (_dateFontImage[(imgY * 128) + (date_time_font_texcoords[0 + (4 * charIndex)] +
+	// 							   i)] != 0x7C1F) { // Do not render magneta pixel
+	// 				_bgSubBuffer[y * 256 + (i + x)] =
+	// 				    _dateFontImage[(imgY * 128) +
+	// 						   (date_time_font_texcoords[0 + (4 * charIndex)] + i)];
+	// 			}
+	// 		}
+	// 		imgY--;
+	// 	}
+	// 	x += date_time_font_texcoords[2 + (4 * charIndex)];
+	// 	if (hourWidthPointer != NULL) {
+	// 		if (c == 2)
+	// 			*hourWidthPointer = x;
+	// 	}
+	// }
+	// commitBgSubModify();
 }
 
 void ThemeTextures::applyGrayscaleToAllGrfTextures() {
@@ -1093,7 +1105,7 @@ void ThemeTextures::videoSetup() {
 	printf("tex().videoSetup()\n");
 	//////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
-	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
+	videoSetModeSub(MODE_5_2D | DISPLAY_BG3_ACTIVE);
 
 	// Initialize gl2d
 	glScreen2D();
@@ -1120,14 +1132,21 @@ void ThemeTextures::videoSetup() {
 	//	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE); // Not sure this does anything...
 	lcdMainOnBottom();
 
-	int bg3Main = bgInit(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
-	bgSetPriority(bg3Main, 3);
+	int id = bgInit(3, BgType_Bmp16, BgSize_B16_256x256, 8, 0);
+	bg3Main = bgGetGfxPtr(id);
+	bgSetPriority(id, 3);
 
-	int bg2Main = bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 8, 0);
-	bgSetPriority(bg2Main, 0);
+	id = bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bg2Main = (u8*)bgGetGfxPtr(id);
+	bgSetPriority(id, 0);
 
-	int bg3Sub = bgInitSub(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
-	bgSetPriority(bg3Sub, 3);
+	id = bgInitSub(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
+	bg3Sub = bgGetGfxPtr(id);
+	bgSetPriority(id, 3);
+
+	id = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 6, 0);
+	bg2Sub = (u8*)bgGetGfxPtr(id);
+	bgSetPriority(id, 2);
 
 	bgSetPriority(0, 1); // Set 3D to below text
 

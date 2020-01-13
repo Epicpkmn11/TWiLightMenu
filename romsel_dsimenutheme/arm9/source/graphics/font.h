@@ -16,6 +16,7 @@ public:
 	Font() { };
 	int load(const std::string &path);
 	void print(bool top, int x, int y, const std::string &text);
+	void print(bool top, int x, int y, const std::u16string &text);
 	int calcWidth(const std::string &text);
 	void print(bool top, int x, int y, int value);
 	int getCenteredX(const std::string &text);
@@ -24,6 +25,7 @@ public:
 };
 
 void printSmall(bool top, int x, int y, const std::string &message);
+void printSmall(bool top, int x, int y, const std::u16string &message);
 void printSmallCentered(bool top, int y, const std::string &message);
 void printLarge(bool top, int x, int y, const std::string &message);
 void printLargeCentered(bool top, int y, const std::string &message);
@@ -35,3 +37,5 @@ void clearText(bool top);
 void clearText();
 
 void fontInit(void);
+
+extern Font smallFont, mediumFont, largeFont;

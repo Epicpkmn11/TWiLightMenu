@@ -1,19 +1,11 @@
-/******************************************************************************
- *******************************************************************************
-	A simple font class for Easy GL2D DS created by:
-
-	Relminator (Richard Eric M. Lope BSN RN)
-	Http://Rel.Phatcode.Net
-
- *******************************************************************************
- ******************************************************************************/
-
 #include "font.h"
 #include <nds.h>
 #include <stdio.h>
 #include "common/tonccpy.h"
+#include "graphics/ThemeTextures.h"
 
-Font smallFont, largeFont;
+Font smallFont, mediumFont, largeFont;
+uint16_t fontPalette[] = {0, 0xD6B5, 0xB9CE, 0xA108};
 
 int Font::load(const std::string &path) {
 	FILE *file = fopen(path.c_str(), "rb");
@@ -158,8 +150,11 @@ std::u16string utf8to16(const std::string &text) {
 	return out;
 }
 
-void Font::print(bool top, int xPos, int yPos, const std::string &message) {
-	std::u16string text = utf8to16(message);
+void Font::print(bool top, int xPos, int yPos, const std::string &text) {
+	print(top, xPos, yPos, utf8to16(text));
+}
+
+void Font::print(bool top, int xPos, int yPos, const std::u16string &text) {
 	int x=xPos;
 	for(uint c=0;c<text.size();c++) {
 		if(text[c] == '\n') {
@@ -169,7 +164,7 @@ void Font::print(bool top, int xPos, int yPos, const std::string &message) {
 		}
 
 		int t = getCharIndex(text[c]);
-		char bitmap[font.tileWidth*font.tileHeight];
+		u8 bitmap[font.tileWidth*font.tileHeight];
 		for(int i=0;i<font.tileSize;i++) {
 			bitmap[(i*4)]   = font.tiles[i+(t*font.tileSize)]>>6 & 3;
 			bitmap[(i*4)+1] = font.tiles[i+(t*font.tileSize)]>>4 & 3;
@@ -182,8 +177,21 @@ void Font::print(bool top, int xPos, int yPos, const std::string &message) {
 			yPos += font.tileHeight;
 		}
 
-		for(int i=0;i<font.tileHeight;i++) {
-			tonccpy((u8*)0x06020000+((yPos+i)*256)+x+font.widths[t*3], bitmap+(i*font.tileWidth), font.widths[(t*3)+1]);
+		if(top) {
+			// for(int py=0;py<font.tileHeight;py++) {
+			// 	for(int px=0;px<font.widths[(t*3)+1];px++) {
+			// 		if(fontPalette[bitmap[(py*font.tileWidth)+px]]>>15 != 0) {
+			// 			_bgSubBuffer[((yPos+py)*256)+x+px] = fontPalette[bitmap[(py*font.tileWidth)+px]];
+			// 		}
+			// 	}
+			// }
+			for(int i=0;i<font.tileHeight;i++) {
+				tonccpy(bg2Sub+((yPos+i)*256)+x+font.widths[t*3], bitmap+(i*font.tileWidth), font.widths[(t*3)+1]);
+			}
+		} else {
+			for(int i=0;i<font.tileHeight;i++) {
+				tonccpy(bg2Main+((yPos+i)*256)+x+font.widths[t*3], bitmap+(i*font.tileWidth), font.widths[(t*3)+1]);
+			}
 		}
 		x += font.widths[(t*3)+2];
 	}
@@ -216,17 +224,20 @@ void Font::printCentered(bool top, int y, int value) {
 }
 
 int calcSmallFontWidth(const std::string &text) {
-	return smallFont.calcWidth(text);
+	return mediumFont.calcWidth(text);
 }
 int calcLargeFontWidth(const std::string &text) {
 	return largeFont.calcWidth(text);
 }
 
 void printSmall(bool top, int x, int y, const std::string &message){
-	smallFont.print(top, x, y, message);
+	mediumFont.print(top, x, y, message);
+}
+void printSmall(bool top, int x, int y, const std::u16string &message){
+	mediumFont.print(top, x, y, message);
 }
 void printSmallCentered(bool top, int y, const std::string &message){
-	smallFont.printCentered(top, y, message);
+	mediumFont.printCentered(top, y, message);
 }
 void printLarge(bool top, int x, int y, const std::string &message){
 	largeFont.print(top, x, y, message);
@@ -237,9 +248,9 @@ void printLargeCentered(bool top, int y, const std::string &message){
 
 void clearText(bool top) {
 	if(top) {
-
+		dmaFillHalfWords(0, bg2Sub, 256*128);
 	} else {
-		dmaFillHalfWords(0, (u16*)0x06020000, 256*192);
+		dmaFillHalfWords(0, bg2Main, 256*192);
 	}
 }
 void clearText(){
@@ -249,5 +260,6 @@ void clearText(){
 
 void fontInit(void){
 	largeFont.load("nitro:/graphics/font/font_l.nftr");
-	smallFont.load("nitro:/graphics/font/font_m.nftr");
+	mediumFont.load("nitro:/graphics/font/font_m.nftr");
+	smallFont.load("nitro:/graphics/font/font_s.nftr");
 }

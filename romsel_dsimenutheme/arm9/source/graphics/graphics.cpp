@@ -54,8 +54,6 @@
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
-extern u16 usernameRendered[11];
-
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
@@ -390,11 +388,11 @@ void playRotatingCubesVideo(void) {
 	if (rocketVideo_loadFrame) {
 		DC_FlushRange((void*)(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000)), 0x7000);
 		for (int v = 0; v < 56; v += 2) {
-			dmaCopyWords(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), (u16*)BG_GFX_SUB+(256*(rocketVideo_videoYpos+v+bottomField)), 0x200);
+			dmaCopyWords(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), bg3Sub+(256*(rocketVideo_videoYpos+v+bottomField)), 0x200);
 			if (v == 54) {
-				dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), (u16*)BG_GFX_SUB+(256*(rocketVideo_videoYpos+v+1+bottomField)), 0x200);
+				dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), bg3Sub+(256*(rocketVideo_videoYpos+v+1+bottomField)), 0x200);
 			} else {
-				dmaCopyWords(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), (u16*)BG_GFX_SUB+(256*(rocketVideo_videoYpos+v+1+bottomField)), 0x200);
+				dmaCopyWords(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), bg3Sub+(256*(rocketVideo_videoYpos+v+1+bottomField)), 0x200);
 			}
 		}
 
@@ -1409,7 +1407,7 @@ static std::string loadedDate;
 
 void drawCurrentDate() {
 	// Load date
-	int x = (ms().theme == 4 ? 122 : 162);
+	int x = (ms().theme == 4 ? 121 : 161);
 	char date[6];
 
 	if (!GetDate(FORMAT_MD, date, sizeof(date)))
@@ -1421,50 +1419,31 @@ void drawCurrentDate() {
 
 	loadedDate = date;
 
-	tex().drawDateTime(date, x, 15, 5, NULL);
+	tex().drawDateTime(date, x);
 }
 
 static std::string loadedTime;
-static int hourWidth;
-static bool initialClockDraw = true;
 
 void drawCurrentTime() {
 	// Load time
-	int x = (ms().theme == 4 ? 162 : 200);
-	char time[10];
+	int x = (ms().theme == 4 ? 161 : 199);
+
 	std::string currentTime = RetTime();
 	if (currentTime != loadedTime) {
 		loadedTime = currentTime;
-		if (currentTime.substr(0, 1) == " ")
-			currentTime = "0" + currentTime.substr(1);
-		sprintf(time, currentTime.c_str());
-
-		int howManyToDraw = 5;
-		if (initialClockDraw) {
-			initialClockDraw = false;
-		} else {
-			if (currentTime.substr(3, 2) != "00") {
-				strcpy(time, currentTime.substr(3, 2).c_str());
-				howManyToDraw = 2;
-				x = hourWidth;
-			}
-		}
-		tex().drawDateTime(time, x, 15, howManyToDraw, &hourWidth);
+		
+		tex().drawDateTime(currentTime, x);
 	}
 }
 
 void drawClockColon() {
 	// Load time
-	int x = (ms().theme == 4 ? 176 : 214);
-	int imgY = 15;
-	char colon[1];
+	int x = (ms().theme == 4 ? 175 : 213);
 
 	// Blink the ':' once per second.
 	if (colonTimer >= 60) {
 		colonTimer = 0;
-		std::string currentColon = showColon ? ":" : ";";
-		sprintf(colon, currentColon.c_str());
-		tex().drawDateTime(colon, x, imgY, 1, NULL);
+		tex().drawDateTime(showColon ? ":" : " ", x);
 		showColon = !showColon;
 	}
 }

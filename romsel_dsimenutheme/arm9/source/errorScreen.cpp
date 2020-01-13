@@ -100,8 +100,8 @@ void checkSdEject(void) {
 
 	REG_BLDY = 0;
 
-	dmaCopyWordsAsynch(0, (void*)(showNonExtendedImage ? sdRemovedImage : sdRemovedExtendedImage), BG_GFX, 0x18000);
-	dmaFillWords(0, BG_GFX_SUB, 0x18000);
+	dmaCopyWordsAsynch(0, (void*)(showNonExtendedImage ? sdRemovedImage : sdRemovedExtendedImage), bg3Main, 0x18000);
+	dmaFillWords(0, bg3Sub, 0x18000);
 
 	while(1) {
 		// Currently not working

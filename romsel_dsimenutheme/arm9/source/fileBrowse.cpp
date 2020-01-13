@@ -149,9 +149,6 @@ extern void SetWidescreen(const char *filename);
 
 extern bool rocketVideo_playVideo;
 
-extern char usernameRendered[11];
-extern bool usernameRenderedDone;
-
 const char *gameOrderIniPath;
 const char *recentlyPlayedIniPath;
 const char *timesPlayedIniPath;

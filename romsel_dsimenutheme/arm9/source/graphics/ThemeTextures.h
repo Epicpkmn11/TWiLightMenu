@@ -13,6 +13,9 @@
 
 extern int boxArtType[40];
 
+extern u16 *bg3Main, *bg3Sub;
+extern u8 *bg2Main, *bg2Sub;
+
 using std::unique_ptr;
 using std::min;
 using std::vector;
@@ -65,7 +68,7 @@ public:
   void drawBatteryImageCached();
 
   void drawShoulders(bool showLShoulder, bool showRshoulder) ;
-  void drawDateTime(const char* date, const int posX, const int posY, const int drawCount, int *hourWidthPointer);
+  void drawDateTime(const std::string &date, const int posX);
 
   void clearTopScreen();
   static void videoSetup();
