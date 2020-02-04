@@ -31,7 +31,7 @@ extern bool showColon;
 
 static u16 _bmpImageBuffer[256 * 192] = {0};
 static u16 _bgMainBuffer[256 * 192] = {0};
-u16 _bgSubBuffer[256 * 192] = {0};
+static u16 _bgSubBuffer[256 * 192] = {0};
 
 static void* boxArtCache = (void*)0x02500000;	// Size: 0x1B8000
 static bool boxArtFound[40] = {false};
@@ -972,7 +972,7 @@ unsigned int ThemeTextures::getDateTimeFontSpriteIndex(const u16 letter) {
 }
 
 void ThemeTextures::drawDateTime(const std::string &str, const int posX) {
-	smallFont.print(true, posX, (ms().theme == 4 ? 10 : 5), str);
+	// smallFont.print(true, posX, (ms().theme == 4 ? 10 : 5), str);
 	return;
 	// int x = posX;
 	// int screenPosY = (ms().theme == 4 ? 19 : 14);
@@ -1144,9 +1144,9 @@ void ThemeTextures::videoSetup() {
 	bg3Sub = bgGetGfxPtr(id);
 	bgSetPriority(id, 3);
 
-	id = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 6, 0);
-	bg2Sub = (u8*)bgGetGfxPtr(id);
-	bgSetPriority(id, 2);
+	// id = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 6, 0);
+	// bg2Sub = (u8*)bgGetGfxPtr(id);
+	// bgSetPriority(id, 2);
 
 	bgSetPriority(0, 1); // Set 3D to below text
 

@@ -1307,6 +1307,8 @@ void vBlankHandler() {
 	// 	launchDotDoFrameChange = !launchDotDoFrameChange;
 	
 	bottomBgRefresh(); // Refresh the background image on vblank
+
+	processPrints();
 }
 
 void loadPhotoList() {

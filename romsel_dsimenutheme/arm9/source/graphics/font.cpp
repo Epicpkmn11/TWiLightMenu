@@ -6,6 +6,15 @@
 
 Font smallFont, mediumFont, largeFont;
 uint16_t fontPalette[] = {0, 0xD6B5, 0xB9CE, 0xA108};
+std::string test = "test";
+
+struct PrintJob {
+	bool top, clear;
+	Font &font;
+	int x, y;
+	const std::string &text;
+};
+std::vector<PrintJob> printJobs;
 
 int Font::load(const std::string &path) {
 	FILE *file = fopen(path.c_str(), "rb");
@@ -216,11 +225,11 @@ int Font::getCenteredX(const std::string &text) {
 }
 
 void Font::printCentered(bool top, int y, const std::string &text) {
-	print(top, getCenteredX(text), y, text);
+	// print(top, , y, text);
 }
 
 void Font::printCentered(bool top, int y, int value) {
-	printCentered(top, y, std::to_string(value));
+	// printCentered(top, y, std::to_string(value));
 }
 
 int calcSmallFontWidth(const std::string &text) {
@@ -231,27 +240,23 @@ int calcLargeFontWidth(const std::string &text) {
 }
 
 void printSmall(bool top, int x, int y, const std::string &message){
-	mediumFont.print(top, x, y, message);
+	printJobs.push_back({top, false, mediumFont, x, y, message});
 }
 void printSmall(bool top, int x, int y, const std::u16string &message){
-	mediumFont.print(top, x, y, message);
+	printJobs.push_back({top, false, mediumFont, x, y, test});
 }
 void printSmallCentered(bool top, int y, const std::string &message){
-	mediumFont.printCentered(top, y, message);
+	printJobs.push_back({top, false, mediumFont, mediumFont.getCenteredX(message), y, message});
 }
 void printLarge(bool top, int x, int y, const std::string &message){
-	largeFont.print(top, x, y, message);
+	printJobs.push_back({top, false, largeFont, x, y, message});
 }
 void printLargeCentered(bool top, int y, const std::string &message){
-	largeFont.printCentered(top, y, message);
+	printJobs.push_back({top, false, largeFont, largeFont.getCenteredX(message), y, message});
 }
 
 void clearText(bool top) {
-	if(top) {
-		dmaFillHalfWords(0, bg2Sub, 256*128);
-	} else {
-		dmaFillHalfWords(0, bg2Main, 256*192);
-	}
+	printJobs.push_back({top, true, smallFont, 0, 0, ""});
 }
 void clearText(){
 	clearText(true);
@@ -262,4 +267,20 @@ void fontInit(void){
 	largeFont.load("nitro:/graphics/font/font_l.nftr");
 	mediumFont.load("nitro:/graphics/font/font_m.nftr");
 	smallFont.load("nitro:/graphics/font/font_s.nftr");
+}
+
+void processPrints(void) {
+	for(uint i = 0;i<printJobs.size();i++) {
+		if(printJobs[i].clear) {
+			if(printJobs[i].top) {
+				dmaFillHalfWords(0, bg2Sub, 256*128);
+			} else {
+				dmaFillHalfWords(0, bg2Main, 256*192);
+			}
+		} else {
+			printJobs[i].font.print(printJobs[i].top, printJobs[i].x, printJobs[i].y, printJobs[i].text);
+		}
+		// break;
+	}
+	printJobs.clear();
 }

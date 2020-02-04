@@ -24,6 +24,8 @@ public:
 	void printCentered(bool top, int y, int value);
 };
 
+void processPrints(void);
+
 void printSmall(bool top, int x, int y, const std::string &message);
 void printSmall(bool top, int x, int y, const std::u16string &message);
 void printSmallCentered(bool top, int y, const std::string &message);
