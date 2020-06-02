@@ -413,7 +413,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents) {
 }
 
 void waitForFadeOut(void) {
-	if (!dropDown && ms().theme == 0) {
+	if (!dropDown && tc().renderDropDown()) {
 		dropDown = true;
 		for (int i = 0; i < 60; i++) {
 			snd().updateStream();
@@ -500,19 +500,19 @@ void updateScrollingState(u32 held, u32 pressed) {
 void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
 	if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 		showSTARTborder = true;
-		if (ms().theme == 5 || !ms().showBoxArt) {
+		if (!tc().allowBoxArt() || !ms().showBoxArt) {
 			return;
 		}
 
 		if (!boxArtLoaded) {
 			if (isDirectory[CURPOS]) {
 				clearBoxArt(); // Clear box art, if it's a directory
-				if (ms().theme == 1 && !rocketVideo_playVideo) {
+				if (tc().allowRVid() && !rocketVideo_playVideo) {
 					rocketVideo_playVideo = true;
 				}
 			} else {
-				clearBoxArt();		
-				if (ms().theme == 1 && rocketVideo_playVideo) {
+				clearBoxArt();
+				if (tc().allowRVid() && rocketVideo_playVideo) {
 					// Clear top screen cubes
 					rocketVideo_playVideo = false;
 				}

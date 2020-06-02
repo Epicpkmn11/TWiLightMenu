@@ -64,7 +64,7 @@ public:
 	void drawBatteryImageCached();
 
 	void drawShoulders(bool LShoulderActive, bool RShoulderActive);
-	void drawDateTime(const char* date, int posX, int posY, const int drawCount, int *hourWidthPointer);
+	void drawDateTime(const std::string &date, int posX, int posY);
 
 	void clearTopScreen();
 	static void videoSetup();

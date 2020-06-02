@@ -612,7 +612,7 @@ int main(int argc, char **argv) {
 		fadeType = true;
 		for (int i = 0; i < 5; i++)
 			swiWaitForVBlank();
-		if (!dropDown && ms().theme == 0) {
+		if (!dropDown && tc().renderDropDown()) {
 			dropDown = true;
 			for (int i = 0; i < 72; i++) 
 				swiWaitForVBlank();

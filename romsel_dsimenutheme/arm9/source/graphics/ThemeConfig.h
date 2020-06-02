@@ -33,6 +33,11 @@ class ThemeConfig {
         int _batteryRenderY;
         int _batteryRenderX;
 
+        int _dateRenderY;
+        int _dateRenderX;
+        int _timeRenderY;
+        int _timeRenderX;
+
         // int _photoRenderY;
         // int _photoRenderX;
 
@@ -44,8 +49,14 @@ class ThemeConfig {
         bool _dialogBoxUserPalette;
 
         bool _renderPhoto;
+        bool _renderDropDown;
+        bool _renderName;
+
         bool _playStartupJingle;
         int _startupJingleDelayAdjust;
+
+        bool _allowBoxArt;
+        bool _allowRVid;
 
     public:
         ThemeConfig();
@@ -79,6 +90,11 @@ class ThemeConfig {
         int batteryRenderY() const { return _batteryRenderY; }
         int batteryRenderX() const { return _batteryRenderX; }
 
+        int dateRenderY() const { return _dateRenderY; }
+        int dateRenderX() const { return _dateRenderX; }
+        int timeRenderY() const { return _timeRenderY; }
+        int timeRenderX() const { return _timeRenderX; }
+
         // int photoRenderY() const { return _photoRenderY; }
         // int photoRenderX() const { return _photoRenderX; }
 
@@ -90,9 +106,14 @@ class ThemeConfig {
         bool dialogBoxUserPalette() const { return _dialogBoxUserPalette; }
 
         bool renderPhoto() const { return _renderPhoto; }
+        bool renderDropDown() const { return _renderDropDown; }
+        bool renderName() const { return _renderName; }
 
         bool playStartupJingle() const { return _playStartupJingle; }
         int startupJingleDelayAdjust() const { return _startupJingleDelayAdjust; }
+
+        bool allowBoxArt() const { return _allowBoxArt; }
+        bool allowRVid() const { return _allowRVid; }
 };
 
 typedef singleton<ThemeConfig> themeConfig_s;

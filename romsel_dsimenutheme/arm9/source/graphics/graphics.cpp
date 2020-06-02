@@ -1522,11 +1522,6 @@ static std::string loadedDate;
 
 void drawCurrentDate() {
 	// Load date
-	int x = (ms().theme >= 4 ? 122 : 162);
-	if (ms().theme == 5) {
-		x -= 28;
-	}
-	int y = (ms().theme == 4 ? 12 : 7);
 	char date[6];
 
 	if (!GetDate(FORMAT_MD, date, sizeof(date)))
@@ -1538,57 +1533,28 @@ void drawCurrentDate() {
 
 	loadedDate = date;
 
-	tex().drawDateTime(date, x, y, 5, NULL);
+	tex().drawDateTime(date, tc().dateRenderX(), tc().dateRenderY());
 }
 
 static std::string loadedTime;
-static int hourWidth;
-static bool initialClockDraw = true;
 
 void drawCurrentTime() {
 	// Load time
-	int x = (ms().theme >= 4 ? 162 : 200);
-	if (ms().theme == 5) {
-		x -= 28;
-	}
-	int y = (ms().theme == 4 ? 12 : 7);
-	char time[10];
 	std::string currentTime = RetTime();
 	if (currentTime != loadedTime) {
 		loadedTime = currentTime;
-		if (currentTime.substr(0, 1) == " ")
-			currentTime = "0" + currentTime.substr(1);
-		sprintf(time, currentTime.c_str());
+		if (currentTime[0] == ' ')
+			currentTime[0] = '0';
 
-		int howManyToDraw = 5;
-		if (initialClockDraw) {
-			initialClockDraw = false;
-		} else {
-			if (currentTime.substr(3, 2) != "00") {
-				strcpy(time, currentTime.substr(3, 2).c_str());
-				howManyToDraw = 2;
-				x = hourWidth;
-			}
-		}
-		tex().drawDateTime(time, x, y, howManyToDraw, &hourWidth);
+		tex().drawDateTime(currentTime, tc().timeRenderX(), tc().timeRenderY());
 	}
 }
 
 void drawClockColon() {
-	// Load time
-	int x = (ms().theme >= 4 ? 176 : 214);
-	if (ms().theme == 5) {
-		x -= 28;
-	}
-	int y = (ms().theme == 4 ? 12 : 7);
-	char colon[1];
-
 	// Blink the ':' once per second.
 	if (colonTimer >= 60) {
 		colonTimer = 0;
-		std::string currentColon = showColon ? ":" : ";";
-		sprintf(colon, currentColon.c_str());
-		tex().drawDateTime(colon, x, y, 1, NULL);
+		tex().drawDateTime(showColon ? ":" : ";", tc().timeRenderX() + 14, tc().timeRenderY());
 		showColon = !showColon;
 	}
 }

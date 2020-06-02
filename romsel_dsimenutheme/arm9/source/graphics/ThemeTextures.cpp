@@ -953,13 +953,13 @@ unsigned int ThemeTextures::getDateTimeFontSpriteIndex(const u16 letter) {
 	return spriteIndex;
 }
 
-void ThemeTextures::drawDateTime(const char *str, int posX, int posY, const int drawCount, int *hourWidthPointer) {
+void ThemeTextures::drawDateTime(const std::string &str, int posX, int posY) {
 	beginBgSubModify();
 
 	const Texture *tex = dateTimeFontTexture();
 	const u16 *bitmap = tex->texture();
 
-	for (int c = 0; c < drawCount; c++) {
+	for (uint c = 0; c < str.length(); c++) {
 		unsigned int charIndex = getDateTimeFontSpriteIndex(str[c]);
 		// Start date
 		for (uint y = 0; y < tex->texHeight(); y++) {
@@ -972,10 +972,6 @@ void ThemeTextures::drawDateTime(const char *str, int posX, int posY, const int 
 			}
 		}
 		posX += date_time_font_texcoords[2 + (4 * charIndex)];
-		if (hourWidthPointer != NULL) {
-			if (c == 2)
-				*hourWidthPointer = posX;
-		}
 	}
 
 	commitBgSubModify();
