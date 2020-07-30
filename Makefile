@@ -91,3 +91,17 @@ clean:
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/r4menu.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/settings.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/slot1launch.srldr"
+
+format:
+	@echo Formatting code...
+	@$(MAKE) -C booter format
+	@$(MAKE) -C booter_fc format
+	@$(MAKE) -C quickmenu format
+	@$(MAKE) -C manual format
+	@$(MAKE) -C romsel_aktheme format
+	@$(MAKE) -C romsel_dsimenutheme format
+	@$(MAKE) -C romsel_r4theme format
+	@$(MAKE) -C rungame format
+	@$(MAKE) -C settings format
+	@$(MAKE) -C slot1launch format
+	@$(MAKE) -C title format

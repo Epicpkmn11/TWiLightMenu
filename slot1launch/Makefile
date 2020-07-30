@@ -72,3 +72,7 @@ data:
 
 bootloader: data
 	@$(MAKE) -C bootloader
+
+format:
+	make -C arm7 format
+	make -C arm9 format
