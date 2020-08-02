@@ -38,6 +38,7 @@ int bgColor2 = 0x77BD;
 
 int screenBrightness = 31;
 
+u16 bmpImageBuffer[256*192] = {0};
 std::vector<u16> pageImage;
 
 extern int pageYpos;
@@ -145,13 +146,45 @@ void vBlankHandler() {
 }
 
 void pageLoad(const std::string &filename) {
-	std::vector<unsigned char> image;
-	unsigned width, height;
-	lodepng::decode(image, width, height, filename);
-	pageYsize = height;
-	pageImage = std::vector<u16>((pageYsize + 192) * width);
-	for(unsigned i=0;i<image.size()/4;i++) {
-		pageImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+	if(filename.substr(filename.find_last_of(".") + 1) == "bmp") {
+		FILE* file = fopen(filename.c_str(), "rb");
+
+		if (file) {
+			fseek(file, 0x16, SEEK_SET);
+			fread(&pageYsize, sizeof(u16), 1, file);
+			pageImage = std::vector<u16>((pageYsize + 192) * 256);
+
+			fseek(file, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(file) + 0xe;
+			fseek(file, pixelStart, SEEK_SET);
+			int y = pageYsize-1;
+			for (int ii = pageYsize; ii > 0; ii-=192) {
+				fread(bmpImageBuffer, sizeof(u16), 256*192, file);
+				u16* src = bmpImageBuffer;
+				int x = 0;
+				for (int i=0; i<256*(ii>192 ? 192 : ii); i++) {
+					if (x >= 256) {
+						x = 0;
+						y--;
+					}
+					u16 val = *(src++);
+					pageImage[y*256+x] = convertToDsBmp(val);
+					x++;
+				}
+				y--;
+			}
+		}
+
+		fclose(file);
+	} else {
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, filename);
+		pageYsize = height;
+		pageImage = std::vector<u16>((pageYsize + 192) * width);
+		for(unsigned i=0;i<image.size()/4;i++) {
+			pageImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		}
 	}
 
 	dmaCopyWordsAsynch(0, pageImage.data(), bgGetGfxPtr(bg3Main)+(18*256), 0x15C00);
