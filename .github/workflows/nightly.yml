@@ -32,10 +32,7 @@ jobs:
         run: |
           echo deb http://deb.debian.org/debian testing main contrib non-free >> /etc/apt/sources.list
           sudo apt-get update
-          sudo apt-get install chromium ffmpeg libxml2-utils p7zip-full python -y
-          sudo apt-get install ttf-arphic-newsung -y
-          sudo apt-get install ttf-arphic-ukai ttf-arphic-uming -y
-          sudo apt-get install ttf-arphic-gbsn00lp ttf-arphic-bkai00mp ttf-arphic-bsmi00lp ttf-arphic-gkai00mp -y
+          sudo apt-get install chromium ffmpeg fonts-noto-cjk libxml2-utils p7zip-full python -y
       - name: Build Manual
         run: make -C manual pages
       - name: 7z manual
