@@ -13,7 +13,7 @@ SED			:= sed -i
 	endif
 endif
 
-PAGES		:=	*
+PAGES		:= chinese_s
 EXCLUDE		:= Acholi assets
 LANGS		:= $(filter-out $(EXCLUDE),$(subst /,,$(wildcard $(PAGES)/)))
 NITROFILES	:= ../nitrofiles
