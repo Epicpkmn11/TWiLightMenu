@@ -1,14 +1,13 @@
 ifeq ($(OS),Windows_NT)
-CHROMIUM	:= chromium.exe
+CHROMIUM	:= firefox.exe
 SED			:= sed.exe -i
 else
 	ifeq ($(shell uname -s),Darwin)
-# I use Edge, change this if using another Chromium browser -Pk11
-CHROMIUM	:= /Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge
+CHROMIUM	:= /Applications/Firefox.app/Contents/MacOS/firefox
 # macOS sed is dumb apparently
 SED			:= sed -i ''
 	else
-CHROMIUM	:= google-chrome
+CHROMIUM	:= firefox
 SED			:= sed -i
 	endif
 endif
@@ -26,13 +25,19 @@ INITARGETS	:= $(foreach file,$(INIFILES),$(foreach lang,$(filter-out english,$(L
 
 .PHONY: all clean
 
-all:	$(TARGETS)
+all:	killserver server $(TARGETS) killserver
+
+server:
+	@python -m SimpleHTTPServer & echo $$! > server.pid
+
+killserver:
+	@if [ -f server.pid ]; then kill $$(cat server.pid); rm server.pid; fi
 
 $(NITROFILES)/pages/%.gif	:	%.html
 	@echo $$(basename $(@D))/$$(basename $<)
 	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
 	@# remove 2>&1 to see errors
-	$(CHROMIUM) --no-sandbox --hide-scrollbars --headless --window-size=256,3000 --screenshot "$<" 1>/dev/null 2>&1
+	$(CHROMIUM) --window-size 256 --screenshot http://localhost:8000/"$<"
 	@ffmpeg -i screenshot.png -vf "palettegen=max_colors=246" palette.png -y -loglevel error
 	@ffmpeg -i screenshot.png -i palette.png -filter_complex "$$(ffmpeg -loop 1 -i screenshot.png -frames:v 3 -vf 'negate,cropdetect=0:2:0' -f null - 2>&1 | awk '/y2/ {print $$NF}' | tail -1),paletteuse" "$@" -y -loglevel error
 	@rm -f screenshot.png palette.png
