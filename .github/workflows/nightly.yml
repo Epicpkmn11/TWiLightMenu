@@ -34,7 +34,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install ffmpeg fonts-noto-cjk libxml2-utils p7zip-full python -y
           curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo apt install ./google-chrome-stable_current_amd64.deb
+          sudo apt install ./google-chrome-stable_current_amd64.deb -y
       - name: Build Manual
         run: make -C manual pages
       - name: 7z manual
