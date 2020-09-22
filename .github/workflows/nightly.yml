@@ -30,180 +30,182 @@ jobs:
           submodules: recursive
       - name: Install tools
         run: |
-          echo deb http://deb.debian.org/debian stable main contrib non-free >> /etc/apt/sources.list
+          echo deb http://deb.debian.org/debian unstable main contrib non-free >> /etc/apt/sources.list
           sudo apt-get update
           sudo apt-get install chromium ffmpeg fonts-ipafont-gothic libxml2-utils p7zip-full python -y
       - name: Build Manual
         run: make -C manual pages
-      - name: Build TWiLightMenu++
-        run: make package
-      - name: Make booter and TWiLightMenu CIAs
-        id: make-cias
-        run: |
-          cd booter/
-          chmod +x make_cia
-          ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
-          mkdir -p "../7zfile/3DS - CFW users/"
-          cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
+      - name: 7z manual
+        run: 7z a manual.7z manual/nitrofiles/pages
+      # - name: Build TWiLightMenu++
+      #   run: make package
+      # - name: Make booter and TWiLightMenu CIAs
+      #   id: make-cias
+      #   run: |
+      #     cd booter/
+      #     chmod +x make_cia
+      #     ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+      #     mkdir -p "../7zfile/3DS - CFW users/"
+      #     cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
 
-          cd ../rungame/
-          chmod +x make_cia
-          ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
-          cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
+      #     cd ../rungame/
+      #     chmod +x make_cia
+      #     ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+      #     cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
 
-          echo ::set-output name=commit_tag::$(git describe --abbrev=0 --tags)
-          echo ::set-output name=commit_hash::$(git log --format=%h -1)
+      #     echo ::set-output name=commit_tag::$(git describe --abbrev=0 --tags)
+      #     echo ::set-output name=commit_hash::$(git log --format=%h -1)
 
-          # Webhook info
-          echo ::set-output name=author_name::$(git log -1 "$GITHUB_SHA" --pretty="%aN")
-          echo ::set-output name=committer_name::$(git log -1 "$GITHUB_SHA" --pretty="%cN")
-          echo ::set-output name=commit_subject::$(git log -1 "$GITHUB_SHA" --pretty="%s")
-          echo ::set-output name=commit_message::$(git log -1 "$GITHUB_SHA" --pretty="%b")
-      - name: Pack 7z Package for nightly
-        run: |
-          # Make artifacts directory
-          mkdir -p ~/artifacts
+      #     # Webhook info
+      #     echo ::set-output name=author_name::$(git log -1 "$GITHUB_SHA" --pretty="%aN")
+      #     echo ::set-output name=committer_name::$(git log -1 "$GITHUB_SHA" --pretty="%cN")
+      #     echo ::set-output name=commit_subject::$(git log -1 "$GITHUB_SHA" --pretty="%s")
+      #     echo ::set-output name=commit_message::$(git log -1 "$GITHUB_SHA" --pretty="%b")
+      # - name: Pack 7z Package for nightly
+      #   run: |
+      #     # Make artifacts directory
+      #     mkdir -p ~/artifacts
 
-          # Theme is currently unused
-          rm -rf 7zfile/_nds/TWiLightMenu/akmenu
+      #     # Theme is currently unused
+      #     rm -rf 7zfile/_nds/TWiLightMenu/akmenu
 
-          # Debug 7z
-          mv 7zfile/debug debug
-          7z a TWiLightMenu-debug.7z debug
-          mv TWiLightMenu-debug.7z ~/artifacts
+      #     # Debug 7z
+      #     mv 7zfile/debug debug
+      #     7z a TWiLightMenu-debug.7z debug
+      #     mv TWiLightMenu-debug.7z ~/artifacts
 
-          cp -r 7zfile/ TWiLightMenu/
-          7z a TWiLightMenu.7z TWiLightMenu/
-          mv TWiLightMenu.7z ~/artifacts
+      #     cp -r 7zfile/ TWiLightMenu/
+      #     7z a TWiLightMenu.7z TWiLightMenu/
+      #     mv TWiLightMenu.7z ~/artifacts
 
-          # DSi 7z
-          cp -r TWiLightMenu/DSi\ -\ CFW\ users/SDNAND\ root/* TWiLightMenu
-          rm -rf TWiLightMenu/DSi\ -\ CFW\ users
-          cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
-          rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
-          rm -rf TWiLightMenu/3DS\ -\ CFW\ users
-          rm -rf TWiLightMenu/Flashcard\ users
-          7z a TWiLightMenu-DSi.7z TWiLightMenu
-          mv TWiLightMenu-DSi.7z ~/artifacts
+      #     # DSi 7z
+      #     cp -r TWiLightMenu/DSi\ -\ CFW\ users/SDNAND\ root/* TWiLightMenu
+      #     rm -rf TWiLightMenu/DSi\ -\ CFW\ users
+      #     cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
+      #     rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
+      #     rm -rf TWiLightMenu/3DS\ -\ CFW\ users
+      #     rm -rf TWiLightMenu/Flashcard\ users
+      #     7z a TWiLightMenu-DSi.7z TWiLightMenu
+      #     mv TWiLightMenu-DSi.7z ~/artifacts
 
-          # 3DS 7z
-          rm -rf TWiLightMenu
-          cp -r 7zfile/ TWiLightMenu/
-          cp -r TWiLightMenu/3DS\ -\ CFW\ users/* TWiLightMenu
-          rm -rf TWiLightMenu/3DS\ -\ CFW\ users
-          cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
-          rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
-          rm -rf TWiLightMenu/DSi\ -\ CFW\ users
-          rm -rf TWiLightMenu/Flashcard\ users
-          7z a TWiLightMenu-3DS.7z TWiLightMenu
-          mv TWiLightMenu-3DS.7z ~/artifacts
+      #     # 3DS 7z
+      #     rm -rf TWiLightMenu
+      #     cp -r 7zfile/ TWiLightMenu/
+      #     cp -r TWiLightMenu/3DS\ -\ CFW\ users/* TWiLightMenu
+      #     rm -rf TWiLightMenu/3DS\ -\ CFW\ users
+      #     cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
+      #     rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
+      #     rm -rf TWiLightMenu/DSi\ -\ CFW\ users
+      #     rm -rf TWiLightMenu/Flashcard\ users
+      #     7z a TWiLightMenu-3DS.7z TWiLightMenu
+      #     mv TWiLightMenu-3DS.7z ~/artifacts
 
-          # Flashcard 7z
-          rm -rf TWiLightMenu
-          cp -r 7zfile/ TWiLightMenu/
-          cp -r TWiLightMenu/Flashcard\ users/* TWiLightMenu
-          rm -rf TWiLightMenu/Flashcard\ users
-          rm -rf TWiLightMenu/3DS\ -\ CFW\ users
-          rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
-          rm -rf TWiLightMenu/DSi\ -\ CFW\ users
-          7z a TWiLightMenu-Flashcard.7z TWiLightMenu
-          mv TWiLightMenu-Flashcard.7z ~/artifacts
+      #     # Flashcard 7z
+      #     rm -rf TWiLightMenu
+      #     cp -r 7zfile/ TWiLightMenu/
+      #     cp -r TWiLightMenu/Flashcard\ users/* TWiLightMenu
+      #     rm -rf TWiLightMenu/Flashcard\ users
+      #     rm -rf TWiLightMenu/3DS\ -\ CFW\ users
+      #     rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
+      #     rm -rf TWiLightMenu/DSi\ -\ CFW\ users
+      #     7z a TWiLightMenu-Flashcard.7z TWiLightMenu
+      #     mv TWiLightMenu-Flashcard.7z ~/artifacts
 
-          # Delete themes, AP patches, and widescreen patches for lite
-          rm -rf TWiLightMenu
-          cp -r 7zfile/ TWiLightMenu/
-          rm -rf TWiLightMenu/Debug/
-          rm -rf TWiLightMenu/_nds/TWiLightMenu/*menu/
-          rm -rf TWiLightMenu/_nds/TWiLightMenu/apfix/
-          rm -rf TWiLightMenu/3DS\ -\ CFW\ users/_nds/TWiLightMenu/widescreen/
-          rm -rf TWiLightMenu/Flashcard\ users/Autoboot/
-          rm -rf TWiLightMenu/Flashcard\ users/Flashcart\ Loader/
-          7z a TWiLightMenu-Lite.7z TWiLightMenu/
-          mv TWiLightMenu-Lite.7z ~/artifacts
+      #     # Delete themes, AP patches, and widescreen patches for lite
+      #     rm -rf TWiLightMenu
+      #     cp -r 7zfile/ TWiLightMenu/
+      #     rm -rf TWiLightMenu/Debug/
+      #     rm -rf TWiLightMenu/_nds/TWiLightMenu/*menu/
+      #     rm -rf TWiLightMenu/_nds/TWiLightMenu/apfix/
+      #     rm -rf TWiLightMenu/3DS\ -\ CFW\ users/_nds/TWiLightMenu/widescreen/
+      #     rm -rf TWiLightMenu/Flashcard\ users/Autoboot/
+      #     rm -rf TWiLightMenu/Flashcard\ users/Flashcart\ Loader/
+      #     7z a TWiLightMenu-Lite.7z TWiLightMenu/
+      #     mv TWiLightMenu-Lite.7z ~/artifacts
       - name: Publish build to GH Actions
         uses: actions/upload-artifact@v2
         with:
           path: ~/artifacts/*
           name: build
 
-  # Only run this for non-PR jobs.
-  publish_build:
-    runs-on: ubuntu-latest
-    name: Publish build to TWLBot
-    if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
-    needs: build
-    env:
-      COMMIT_TAG: ${{ needs.build.outputs.commit_tag }}
-      COMMIT_HASH: ${{ needs.build.outputs.commit_hash }}
-      AUTHOR_NAME: ${{ needs.build.outputs.author_name }}
-      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
-    outputs:
-      current_date: ${{ steps.commit.outputs.current_date }}
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-          path: build
-      - name: Commit and push to TWLBot/Builds
-        id: commit
-        run: |
-          CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
-          echo ::set-output name=current_date::$CURRENT_DATE
+  # # Only run this for non-PR jobs.
+  # publish_build:
+  #   runs-on: ubuntu-latest
+  #   name: Publish build to TWLBot
+  #   if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
+  #   needs: build
+  #   env:
+  #     COMMIT_TAG: ${{ needs.build.outputs.commit_tag }}
+  #     COMMIT_HASH: ${{ needs.build.outputs.commit_hash }}
+  #     AUTHOR_NAME: ${{ needs.build.outputs.author_name }}
+  #     COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
+  #   outputs:
+  #     current_date: ${{ steps.commit.outputs.current_date }}
+  #   steps:
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: build
+  #         path: build
+  #     - name: Commit and push to TWLBot/Builds
+  #       id: commit
+  #       run: |
+  #         CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
+  #         echo ::set-output name=current_date::$CURRENT_DATE
 
-          git config --global user.email "flamekat54@aol.com"
-          git config --global user.name "TWLBot"
-          git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/TWLBot/Builds.git
-          cd Builds/
-          cp ${{ github.workspace }}/build/* .
-          git stage .
-          git commit -m "TWiLightMenu | $COMMIT_HASH"
-          git tag v$CURRENT_DATE
-          git push origin v$CURRENT_DATE master
-      - name: Release to TWLBot/Builds
-        run: |
-          # Delete debug 7z
-          rm ${{ github.workspace }}/build/TWiLightMenu-debug.7z
+  #         git config --global user.email "flamekat54@aol.com"
+  #         git config --global user.name "TWLBot"
+  #         git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/TWLBot/Builds.git
+  #         cd Builds/
+  #         cp ${{ github.workspace }}/build/* .
+  #         git stage .
+  #         git commit -m "TWiLightMenu | $COMMIT_HASH"
+  #         git tag v$CURRENT_DATE
+  #         git push origin v$CURRENT_DATE master
+  #     - name: Release to TWLBot/Builds
+  #       run: |
+  #         # Delete debug 7z
+  #         rm ${{ github.workspace }}/build/TWiLightMenu-debug.7z
 
-          AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
-          CONTENT_TYPE="Content-Type: application/json"
-          API_URL="https://api.github.com/repos/TWLBot/Builds/releases"
-          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"TWiLightMenu | $COMMIT_HASH\", \"body\": \"$AUTHOR_NAME - $COMMIT_MESSAGE\", \"prerelease\": true}"
+  #         AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
+  #         CONTENT_TYPE="Content-Type: application/json"
+  #         API_URL="https://api.github.com/repos/TWLBot/Builds/releases"
+  #         RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"TWiLightMenu | $COMMIT_HASH\", \"body\": \"$AUTHOR_NAME - $COMMIT_MESSAGE\", \"prerelease\": true}"
 
-          RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
+  #         RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
 
-          ID=$(echo $RESPONSE | jq --raw-output '.id')
+  #         ID=$(echo $RESPONSE | jq --raw-output '.id')
 
-          for file in ${{ github.workspace }}/build/*; do
-            AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
-            CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
-            CONTENT_TYPE="Content-Type: application/7z-x-compressed"
-            UPLOAD_URL="https://uploads.github.com/repos/TWLBot/Builds/releases/$ID/assets?name=$(basename $file)"
+  #         for file in ${{ github.workspace }}/build/*; do
+  #           AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
+  #           CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
+  #           CONTENT_TYPE="Content-Type: application/7z-x-compressed"
+  #           UPLOAD_URL="https://uploads.github.com/repos/TWLBot/Builds/releases/$ID/assets?name=$(basename $file)"
 
-            curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
-          done
+  #           curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
+  #         done
 
-  send_webhook:
-    runs-on: ubuntu-latest
-    needs: [publish_build, build]
-    name: Send Discord webhook
-    if: ${{ !startsWith(github.ref, 'refs/pull') }}
-    env:
-      CURRENT_DATE: ${{ needs.publish_build.outputs.current_date }}
-      AUTHOR_NAME: ${{ needs.build.outputs.author_name }}
-      COMMITTER_NAME: ${{ needs.build.outputs.committer_name }}
-      COMMIT_SUBJECT: ${{ needs.build.outputs.commit_subject }}
-      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
-    steps:
-      - name: Send success webhook
-        if: ${{ success() }}
-        run: |
-          curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-ghactions.sh
-          chmod +x send.sh
-          ./send.sh success ${{ secrets.WEBHOOK_URL }}
-      - name: Send failure webhook
-        if: ${{ failure() }}
-        run: |
-          curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-ghactions.sh
-          chmod +x send.sh
-          ./send.sh failure ${{ secrets.WEBHOOK_URL }}
+  # send_webhook:
+  #   runs-on: ubuntu-latest
+  #   needs: [publish_build, build]
+  #   name: Send Discord webhook
+  #   if: ${{ !startsWith(github.ref, 'refs/pull') }}
+  #   env:
+  #     CURRENT_DATE: ${{ needs.publish_build.outputs.current_date }}
+  #     AUTHOR_NAME: ${{ needs.build.outputs.author_name }}
+  #     COMMITTER_NAME: ${{ needs.build.outputs.committer_name }}
+  #     COMMIT_SUBJECT: ${{ needs.build.outputs.commit_subject }}
+  #     COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
+  #   steps:
+  #     - name: Send success webhook
+  #       if: ${{ success() }}
+  #       run: |
+  #         curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-ghactions.sh
+  #         chmod +x send.sh
+  #         ./send.sh success ${{ secrets.WEBHOOK_URL }}
+  #     - name: Send failure webhook
+  #       if: ${{ failure() }}
+  #       run: |
+  #         curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-ghactions.sh
+  #         chmod +x send.sh
+  #         ./send.sh failure ${{ secrets.WEBHOOK_URL }}
