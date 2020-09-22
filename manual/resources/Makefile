@@ -37,7 +37,8 @@ $(NITROFILES)/pages/%.gif	:	%.html
 	@echo $$(basename $(@D))/$$(basename $<)
 	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
 	@# remove 2>&1 to see errors
-	sudo chmod 0777 /.cache 
+	sudo mkdir /.cache
+	sudo chmod 0777 /.cache
 	sudo -u#1001 $(CHROMIUM) --window-size 256 --screenshot "http://127.0.0.1:8000/$<"
 	@ffmpeg -i screenshot.png -vf "palettegen=max_colors=246" palette.png -y -loglevel error
 	@ffmpeg -i screenshot.png -i palette.png -filter_complex "$$(ffmpeg -loop 1 -i screenshot.png -frames:v 3 -vf 'negate,cropdetect=0:2:0' -f null - 2>&1 | awk '/y2/ {print $$NF}' | tail -1),paletteuse" "$@" -y -loglevel error
