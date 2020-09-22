@@ -32,7 +32,9 @@ jobs:
         run: |
           echo deb http://deb.debian.org/debian testing main contrib non-free >> /etc/apt/sources.list
           sudo apt-get update
-          sudo apt-get install chromium-shell ffmpeg fonts-noto-cjk libxml2-utils p7zip-full python -y
+          sudo apt-get install ffmpeg fonts-noto-cjk libxml2-utils p7zip-full python -y
+          curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install ./google-chrome-stable_current_amd64.deb
       - name: Build Manual
         run: make -C manual pages
       - name: 7z manual
