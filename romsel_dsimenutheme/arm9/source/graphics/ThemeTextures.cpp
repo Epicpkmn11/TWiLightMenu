@@ -698,21 +698,7 @@ unsigned int ThemeTextures::getTopFontSpriteIndex(const u16 letter) {
 
 void ThemeTextures::drawBoxArt(const char *filename) {
 	if(access(filename, F_OK) != 0) {
-		switch (boxArtType[CURPOS]) {
-			case 0:
-			default:
-				filename = "nitro:/graphics/boxart_unknown.png";
-				break;
-			case 1:
-				filename = "nitro:/graphics/boxart_unknown1.png";
-				break;
-			case 2:
-				filename = "nitro:/graphics/boxart_unknown2.png";
-				break;
-			case 3:
-				filename = "nitro:/graphics/boxart_unknown3.png";
-				break;
-		}
+		filename = "nitro:/graphics/boxart_unknown.png";
 	}
 
 	beginBgSubModify();
