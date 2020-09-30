@@ -698,14 +698,8 @@ int main(int argc, char **argv)
 		.option(STR_SORT_METHOD, STR_DESCRIPTION_SORT_METHOD, Option::Int(&ms().sortMethod), {STR_ALPHABETICAL, STR_RECENT, STR_MOST_PLAYED, STR_FILE_TYPE, STR_CUSTOM}, {0, 1, 2, 3, 4})
 		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_SHOW_HIDDEN, STR_DESCRIPTION_SHOW_HIDDEN_1, Option::Bool(&ms().showHidden), {STR_SHOW, STR_HIDE}, {true, false})
-		.option(STR_PREVENT_ROM_DELETION, STR_DESCRIPTION_PREVENT_ROM_DELETION_1, Option::Bool(&ms().preventDeletion), {STR_YES, STR_NO}, {true, false});
-	if (REG_SCFG_EXT != 0) {
-		guiPage.option(STR_BOXART, STR_DESCRIPTION_BOXART_DSI, Option::Int(&ms().showBoxArt), {STR_NON_CACHED, STR_CACHED, STR_HIDE}, {1, 2, 0});
-	} else {
-		if(ms().showBoxArt == 2) // Reset to 1 if not in DSi mode
-			ms().showBoxArt = 1;
-		guiPage.option(STR_BOXART, STR_DESCRIPTION_BOXART, Option::Int(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {1, 0});
-	}
+		.option(STR_PREVENT_ROM_DELETION, STR_DESCRIPTION_PREVENT_ROM_DELETION_1, Option::Bool(&ms().preventDeletion), {STR_YES, STR_NO}, {true, false})
+		.option(STR_BOXART, STR_DESCRIPTION_BOXART, Option::Int(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {1, 0});
 	guiPage.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
 		.option(STR_CLOCK_SYSTEM, STR_DESCRIPTION_CLOCK_SYSTEM, Option::Bool(&ms().show12hrClock), {STR_12_HOUR, STR_24_HOUR}, {true, false})
 		/*.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {STR_FAST, STR_MEDIUM, STR_SLOW},

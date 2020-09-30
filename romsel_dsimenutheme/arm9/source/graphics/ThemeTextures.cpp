@@ -40,7 +40,6 @@ static u16 _bgSubBuffer[256 * 192] = {0};
 static u16 _photoBuffer[208 * 156] = {0};
 
 static void* boxArtCache = (void*)0x02500000;	// Size: 0x1B8000
-static bool boxArtFound[40] = {false};
 int boxArtType[40] = {0};	// 0: NDS, 1: FDS/GBA/GBC/GB, 2: NES/GEN/MD/SFC, 3: SNES
 
 ThemeTextures::ThemeTextures()
@@ -697,25 +696,6 @@ unsigned int ThemeTextures::getTopFontSpriteIndex(const u16 letter) {
 	return spriteIndex;
 }
 
-void ThemeTextures::loadBoxArtToMem(const char *filename, int num) {
-	if (num < 0 || num > 39) {
-		return;
-	}
-
-	FILE *file = fopen(filename, "rb");
-	if (!file) {
-		boxArtFound[num] = false;
-		//filename = "nitro:/graphics/boxart_unknown.bmp";
-		//file = fopen(filename, "rb");
-		return;
-	}
-
-	boxArtFound[num] = true;
-
-	fread((u8*)boxArtCache+(num*0xB000), 1, 0xB000, file);
-	fclose(file);
-}
-
 void ThemeTextures::drawBoxArt(const char *filename) {
 	if(access(filename, F_OK) != 0) {
 		switch (boxArtType[CURPOS]) {
@@ -753,42 +733,6 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 	imageYpos = (192-imageHeight)/2;
 	u16 *src = _bmpImageBuffer;
 	for(uint y = 0; y < imageHeight; y++) {
-		for(uint x = 0; x < imageWidth; x++) {
-			_bgSubBuffer[(y+imageYpos) * 256 + imageXpos + x] = *(src++);
-		}
-	}
-	commitBgSubModify();
-}
-
-void ThemeTextures::drawBoxArtFromMem(int num) {
-	if (num < 0 || num > 39) {
-		return;
-	}
-
-	if (!boxArtFound[num]) {
-		drawBoxArt("nitro:/null.png");
-		return;
-	}
-
-	uint imageXpos, imageYpos, imageWidth, imageHeight;
-
-	// Start loading
-	beginBgSubModify();
-	std::vector<unsigned char> image;
-	lodepng::decode(image, imageWidth, imageHeight, (unsigned char*)boxArtCache+(num*0xB000), 0xB000);
-	if(imageWidth > 256 || imageHeight > 192)	return;
-
-	for(uint i=0;i<image.size()/4;i++) {
-		_bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-		if (ms().colorMode == 1) {
-			_bmpImageBuffer[i] = convertVramColorToGrayscale(_bmpImageBuffer[i]);
-		}
-	}
-
-	imageXpos = (256-imageWidth)/2;
-	imageYpos = (192-imageHeight)/2;
-	u16 *src = _bmpImageBuffer;
-	for(uint y = 0; y < imageHeight;y++) {
 		for(uint x = 0; x < imageWidth; x++) {
 			_bgSubBuffer[(y+imageYpos) * 256 + imageXpos + x] = *(src++);
 		}

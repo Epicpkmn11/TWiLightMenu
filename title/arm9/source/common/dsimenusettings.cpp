@@ -30,7 +30,7 @@ TWLSettings::TWLSettings()
 
 	showMd = 3;
     showDirectories = true;
-    showBoxArt = 1 + isDSiMode();
+    showBoxArt = true;
     animateDsiIcons = true;
     sysRegion = -1;
     launcherApp = -1;

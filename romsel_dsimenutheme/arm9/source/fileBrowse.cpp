@@ -507,21 +507,17 @@ void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
 					// Clear top screen cubes
 					rocketVideo_playVideo = false;
 				}
-				if ((REG_SCFG_EXT != 0) && ms().showBoxArt == 2) {
-					tex().drawBoxArtFromMem(CURPOS); // Load box art
-				} else {
+
+				snprintf(boxArtPath, sizeof(boxArtPath),
+						 "%s:/_nds/TWiLightMenu/boxart/%s.png",
+						 sdFound() ? "sd" : "fat",
+						 dirContents[scrn][CURPOS + PAGENUM * 40].name.c_str());
+				if ((bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
 					snprintf(boxArtPath, sizeof(boxArtPath),
-						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
-								: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-						 dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
-					if ((bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
-						snprintf(boxArtPath, sizeof(boxArtPath),
-							 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
-									: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-							 gameTid[CURPOS]);
-					}
-					tex().drawBoxArt(boxArtPath); // Load box art
+							 "%s:/_nds/TWiLightMenu/boxart/%s.png",
+							 sdFound() ? "sd" : "fat", gameTid[CURPOS]);
 				}
+				tex().drawBoxArt(boxArtPath); // Load box art
 			}
 			boxArtLoaded = true;
 		}
@@ -1476,20 +1472,6 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
-				}
-
-				if ((REG_SCFG_EXT != 0) && ms().showBoxArt == 2 && ms().theme!=5 && !isDirectory[i]) {
-					snprintf(boxArtPath, sizeof(boxArtPath),
-						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
-								: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-						 dirContents[scrn].at(i + PAGENUM * 40).name.c_str());
-					if ((bnrRomType[i] == 0) && (access(boxArtPath, F_OK) != 0)) {
-						snprintf(boxArtPath, sizeof(boxArtPath),
-							 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
-									: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-							 gameTid[i]);
-					}
-					tex().loadBoxArtToMem(boxArtPath, i);
 				}
 			}
 			if (reSpawnBoxes)
