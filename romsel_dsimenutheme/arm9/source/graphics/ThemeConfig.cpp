@@ -16,7 +16,7 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 	_titleboxRenderY(85), _titleboxMaxLines(4), _titleboxTextY(30), _titleboxTextW(240), _titleboxTextLarge(true),
 	_bubbleTipRenderY(80), _bubbleTipRenderX(122), _bubbleTipSpriteH(8), _bubbleTipSpriteW(11),
 	_rotatingCubesRenderY(78), _shoulderLRenderY(172), _shoulderLRenderX(0), _shoulderRRenderY(172), _shoulderRRenderX(178),
-	_volumeRenderY(4), _volumeRenderX(16),  _batteryRenderY(5), _batteryRenderX(235),
+	_volumeRenderY(5), _volumeRenderX(4), _batteryRenderY(5), _batteryRenderX(235),
 	// _photoRenderY(24), _photoRenderX(179),
 	_startTextUserPalette(true), _startBorderUserPalette(true), _buttonArrowUserPalette(true),
 	_movingArrowUserPalette(true), _launchDotsUserPalette(true), _dialogBoxUserPalette(true),
