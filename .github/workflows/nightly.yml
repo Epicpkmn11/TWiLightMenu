@@ -160,15 +160,15 @@ jobs:
           CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
           echo ::set-output name=current_date::$CURRENT_DATE
 
-          git config --global user.email "flamekat54@aol.com"
-          git config --global user.name "TWLBot"
-          git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/TWLBot/Builds.git
-          cd Builds/
-          cp ${{ github.workspace }}/build/* .
-          git stage .
-          git commit -m "TWiLightMenu | $COMMIT_HASH"
-          git tag v$CURRENT_DATE
-          git push origin v$CURRENT_DATE master
+          # git config --global user.email "flamekat54@aol.com"
+          # git config --global user.name "TWLBot"
+          # git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/TWLBot/Builds.git
+          # cd Builds/
+          # cp ${{ github.workspace }}/build/* .
+          # git stage .
+          # git commit -m "TWiLightMenu | $COMMIT_HASH"
+          # git tag v$CURRENT_DATE
+          # git push origin v$CURRENT_DATE master
       - name: Release to TWLBot/Builds
         run: |
           # Delete debug 7z a
@@ -183,14 +183,14 @@ jobs:
 
           ID=$(echo $RESPONSE | jq --raw-output '.id')
 
-          for file in ${{ github.workspace }}/build/*; do
-            AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
-            CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
-            CONTENT_TYPE="Content-Type: application/7z-x-compressed"
-            UPLOAD_URL="https://uploads.github.com/repos/TWLBot/Builds/releases/$ID/assets?name=$(basename $file)"
+          # for file in ${{ github.workspace }}/build/*; do
+          #   AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
+          #   CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
+          #   CONTENT_TYPE="Content-Type: application/7z-x-compressed"
+          #   UPLOAD_URL="https://uploads.github.com/repos/TWLBot/Builds/releases/$ID/assets?name=$(basename $file)"
 
-            curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
-          done
+          #   curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
+          # done
 
   send_webhook:
     runs-on: ubuntu-latest
