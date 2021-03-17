@@ -57,7 +57,7 @@ jobs:
           echo "::set-output name=author_name::$(git log -1 $GITHUB_SHA --pretty=%aN)"
           echo "::set-output name=committer_name::$(git log -1 $GITHUB_SHA --pretty=%cN)"
           echo "::set-output name=commit_subject::$(git log -1 $GITHUB_SHA --pretty=%s)"
-          echo "::set-output name=commit_message::$(git log -1 $GITHUB_SHA --pretty=%b | sed -z 's/\n/\\\n/g')"
+          echo "::set-output name=commit_message::$(git log -1 $GITHUB_SHA --pretty=%b | sed -z 's/\n/\\n/g')"
       - name: Pack 7z Package for nightly
         run: |
           # # Make artifacts directory
@@ -168,8 +168,8 @@ jobs:
           # cp ${{ github.workspace }}/build/* .
           # git stage .
           # git commit -m "TWiLightMenu | $COMMIT_HASH"
-          # git tag v$CURRENT_DATE
-          # git push origin v$CURRENT_DATE master
+          git tag v$CURRENT_DATE
+          git push origin v$CURRENT_DATE master
       - name: Release to TWLBot/Builds
         run: |
           # Delete debug 7z a
