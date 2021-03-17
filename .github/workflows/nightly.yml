@@ -161,10 +161,10 @@ jobs:
           CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
           echo ::set-output name=current_date::$CURRENT_DATE
 
-          # git config --global user.email "flamekat54@aol.com"
-          # git config --global user.name "TWLBot"
-          # git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/TWLBot/Builds.git
-          # cd Builds/
+          git config --global user.email "flamekat54@aol.com"
+          git config --global user.name "TWLBot"
+          git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/TWLBot/Builds.git
+          cd Builds/
           # cp ${{ github.workspace }}/build/* .
           # git stage .
           # git commit -m "TWiLightMenu | $COMMIT_HASH"
