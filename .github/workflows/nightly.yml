@@ -33,107 +33,107 @@ jobs:
           sudo apt-get install p7zip-full python -y
       - name: Get manual pages
         run: |
-          cd manual/nitrofiles
-          curl -LO https://github.com/DS-Homebrew/twilight-manual/releases/download/pages/pages.7z
-          7z x pages.7z
-          rm pages.7z
-      - name: Build TWiLightMenu++
-        run: make package
+          # cd manual/nitrofiles
+          # curl -LO https://github.com/DS-Homebrew/twilight-manual/releases/download/pages/pages.7z
+          # 7z x pages.7z
+          # rm pages.7z
+      # - name: Build TWiLightMenu++
+      #   run: make package
       - name: Make booter and TWiLightMenu CIAs
         id: make-cias
         run: |
-          cd booter/
-          chmod +x make_cia
-          ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
-          ./make_cia --srl="booter_rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
-          mkdir -p "../7zfile/3DS - CFW users/"
-          cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
-          cp "booter_rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
+          # cd booter/
+          # chmod +x make_cia
+          # ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+          # ./make_cia --srl="booter_rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+          # mkdir -p "../7zfile/3DS - CFW users/"
+          # cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
+          # cp "booter_rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
 
-          echo ::set-output name=commit_tag::$(git describe --abbrev=0 --tags)
-          echo ::set-output name=commit_hash::$(git log --format=%h -1)
+          # echo ::set-output name=commit_tag::$(git describe --abbrev=0 --tags)
+          # echo ::set-output name=commit_hash::$(git log --format=%h -1)
 
-          # Webhook info
-          echo "::set-output name=author_name::$(git log -1 $GITHUB_SHA --pretty=%aN)"
-          echo "::set-output name=committer_name::$(git log -1 $GITHUB_SHA --pretty=%cN)"
-          echo "::set-output name=commit_subject::$(git log -1 $GITHUB_SHA --pretty=%s)"
-          echo "::set-output name=commit_message::$(git log -1 $GITHUB_SHA --pretty=%b)"
+          # # Webhook info
+          # echo "::set-output name=author_name::$(git log -1 $GITHUB_SHA --pretty=%aN)"
+          # echo "::set-output name=committer_name::$(git log -1 $GITHUB_SHA --pretty=%cN)"
+          # echo "::set-output name=commit_subject::$(git log -1 $GITHUB_SHA --pretty=%s)"
+          # echo "::set-output name=commit_message::$(git log -1 $GITHUB_SHA --pretty=%b)"
       - name: Pack 7z Package for nightly
         run: |
-          # Make artifacts directory
-          mkdir -p ~/artifacts
+          # # Make artifacts directory
+          # mkdir -p ~/artifacts
 
-          # Theme is currently unused
-          rm -rf 7zfile/_nds/TWiLightMenu/akmenu
+          # # Theme is currently unused
+          # rm -rf 7zfile/_nds/TWiLightMenu/akmenu
 
-          # Debug 7z
-          mv 7zfile/debug debug
-          7z a TWiLightMenu-debug.7z debug
-          mv TWiLightMenu-debug.7z ~/artifacts
+          # # Debug 7z
+          # mv 7zfile/debug debug
+          # 7z a TWiLightMenu-debug.7z debug
+          # mv TWiLightMenu-debug.7z ~/artifacts
 
-          cp -r 7zfile/ TWiLightMenu/
-          7z a TWiLightMenu.7z TWiLightMenu/
-          mv TWiLightMenu.7z ~/artifacts
+          # cp -r 7zfile/ TWiLightMenu/
+          # 7z a TWiLightMenu.7z TWiLightMenu/
+          # mv TWiLightMenu.7z ~/artifacts
 
-          # DSi 7z
-          cp -r TWiLightMenu/DSi\ -\ CFW\ users/SDNAND\ root/* TWiLightMenu
-          rm -rf TWiLightMenu/DSi\ -\ CFW\ users
-          cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
-          rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
-          rm -rf TWiLightMenu/3DS\ -\ CFW\ users
-          rm -rf TWiLightMenu/Flashcard\ users
-          rm -rf TWiLightMenu/_nds/GBARunner2_arm7dldi_3ds.nds
-          rm -rf TWiLightMenu/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds
-          rm -rf TWiLightMenu/_nds/TwiLightMenu/bootplg.srldr
-          rm -rf TWiLightMenu/_nds/TwiLightMenu/gbaswitch.srldr
-          7z a TWiLightMenu-DSi.7z TWiLightMenu
-          mv TWiLightMenu-DSi.7z ~/artifacts
+          # # DSi 7z
+          # cp -r TWiLightMenu/DSi\ -\ CFW\ users/SDNAND\ root/* TWiLightMenu
+          # rm -rf TWiLightMenu/DSi\ -\ CFW\ users
+          # cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
+          # rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
+          # rm -rf TWiLightMenu/3DS\ -\ CFW\ users
+          # rm -rf TWiLightMenu/Flashcard\ users
+          # rm -rf TWiLightMenu/_nds/GBARunner2_arm7dldi_3ds.nds
+          # rm -rf TWiLightMenu/_nds/GBARunner2_arm7dldi_nodsp_3ds.nds
+          # rm -rf TWiLightMenu/_nds/TwiLightMenu/bootplg.srldr
+          # rm -rf TWiLightMenu/_nds/TwiLightMenu/gbaswitch.srldr
+          # 7z a TWiLightMenu-DSi.7z TWiLightMenu
+          # mv TWiLightMenu-DSi.7z ~/artifacts
 
-          # 3DS 7z
-          rm -rf TWiLightMenu
-          cp -r 7zfile/ TWiLightMenu/
-          cp -r TWiLightMenu/3DS\ -\ CFW\ users/* TWiLightMenu
-          rm -rf TWiLightMenu/3DS\ -\ CFW\ users
-          cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
-          rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
-          rm -rf TWiLightMenu/DSi\ -\ CFW\ users
-          rm -rf TWiLightMenu/Flashcard\ users
-          rm -rf TWiLightMenu/_nds/GBARunner2_arm7dldi_dsi.nds
-          rm -rf TWiLightMenu/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds
-          rm -rf TWiLightMenu/_nds/TWiLightMenu/unlaunch
-          rm -rf TWiLightMenu/_nds/TwiLightMenu/bootplg.srldr
-          rm -rf TWiLightMenu/_nds/TwiLightMenu/gbaswitch.srldr
-          7z a TWiLightMenu-3DS.7z TWiLightMenu
-          mv TWiLightMenu-3DS.7z ~/artifacts
+          # # 3DS 7z
+          # rm -rf TWiLightMenu
+          # cp -r 7zfile/ TWiLightMenu/
+          # cp -r TWiLightMenu/3DS\ -\ CFW\ users/* TWiLightMenu
+          # rm -rf TWiLightMenu/3DS\ -\ CFW\ users
+          # cp -r TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users/* TWiLightMenu
+          # rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
+          # rm -rf TWiLightMenu/DSi\ -\ CFW\ users
+          # rm -rf TWiLightMenu/Flashcard\ users
+          # rm -rf TWiLightMenu/_nds/GBARunner2_arm7dldi_dsi.nds
+          # rm -rf TWiLightMenu/_nds/GBARunner2_arm7dldi_nodsp_dsi.nds
+          # rm -rf TWiLightMenu/_nds/TWiLightMenu/unlaunch
+          # rm -rf TWiLightMenu/_nds/TwiLightMenu/bootplg.srldr
+          # rm -rf TWiLightMenu/_nds/TwiLightMenu/gbaswitch.srldr
+          # 7z a TWiLightMenu-3DS.7z TWiLightMenu
+          # mv TWiLightMenu-3DS.7z ~/artifacts
 
-          # Flashcard 7z
-          rm -rf TWiLightMenu
-          cp -r 7zfile/ TWiLightMenu/
-          cp -r TWiLightMenu/Flashcard\ users/* TWiLightMenu
-          rm -rf TWiLightMenu/Flashcard\ users
-          rm -rf TWiLightMenu/3DS\ -\ CFW\ users
-          rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
-          rm -rf TWiLightMenu/DSi\ -\ CFW\ users
-          7z a TWiLightMenu-Flashcard.7z TWiLightMenu
-          mv TWiLightMenu-Flashcard.7z ~/artifacts
+          # # Flashcard 7z
+          # rm -rf TWiLightMenu
+          # cp -r 7zfile/ TWiLightMenu/
+          # cp -r TWiLightMenu/Flashcard\ users/* TWiLightMenu
+          # rm -rf TWiLightMenu/Flashcard\ users
+          # rm -rf TWiLightMenu/3DS\ -\ CFW\ users
+          # rm -rf TWiLightMenu/DSi\&3DS\ -\ SD\ card\ users
+          # rm -rf TWiLightMenu/DSi\ -\ CFW\ users
+          # 7z a TWiLightMenu-Flashcard.7z TWiLightMenu
+          # mv TWiLightMenu-Flashcard.7z ~/artifacts
 
-          # Delete themes, AP patches, and widescreen patches for lite
-          rm -rf TWiLightMenu
-          cp -r 7zfile/ TWiLightMenu/
-          rm -rf TWiLightMenu/Debug/
-          rm -rf TWiLightMenu/_nds/TWiLightMenu/*menu/
-          rm -rf TWiLightMenu/_nds/TWiLightMenu/apfix/
-          rm -rf TWiLightMenu/_nds/TWiLightMenu/extras/fonts/
-          rm -rf TWiLightMenu/3DS\ -\ CFW\ users/_nds/TWiLightMenu/widescreen/
-          rm -rf TWiLightMenu/Flashcard\ users/Autoboot/
-          rm -rf TWiLightMenu/Flashcard\ users/Flashcart\ Loader/
-          7z a TWiLightMenu-Lite.7z TWiLightMenu/
-          mv TWiLightMenu-Lite.7z ~/artifacts
-      - name: Publish build to GH Actions
-        uses: actions/upload-artifact@v2
-        with:
-          path: ~/artifacts/*
-          name: build
+          # # Delete themes, AP patches, and widescreen patches for lite
+          # rm -rf TWiLightMenu
+          # cp -r 7zfile/ TWiLightMenu/
+          # rm -rf TWiLightMenu/Debug/
+          # rm -rf TWiLightMenu/_nds/TWiLightMenu/*menu/
+          # rm -rf TWiLightMenu/_nds/TWiLightMenu/apfix/
+          # rm -rf TWiLightMenu/_nds/TWiLightMenu/extras/fonts/
+          # rm -rf TWiLightMenu/3DS\ -\ CFW\ users/_nds/TWiLightMenu/widescreen/
+          # rm -rf TWiLightMenu/Flashcard\ users/Autoboot/
+          # rm -rf TWiLightMenu/Flashcard\ users/Flashcart\ Loader/
+          # 7z a TWiLightMenu-Lite.7z TWiLightMenu/
+          # mv TWiLightMenu-Lite.7z ~/artifacts
+      # - name: Publish build to GH Actions
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     path: ~/artifacts/*
+      #     name: build
 
   # Only run this for non-PR jobs.
   publish_build:
@@ -149,11 +149,11 @@ jobs:
     outputs:
       current_date: ${{ steps.commit.outputs.current_date }}
     steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-          path: build
+      # - name: Download artifacts
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: build
+      #     path: build
       - name: Commit and push to TWLBot/Builds
         id: commit
         run: |
