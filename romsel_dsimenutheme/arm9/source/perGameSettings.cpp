@@ -96,8 +96,6 @@ extern mm_sound_effect snd_wrong;
 extern mm_sound_effect snd_back;
 extern mm_sound_effect snd_switch;
 
-extern void bgOperations(bool waitFrame);
-
 char fileCounter[8];
 char gameTIDText[16];
 char saveNoDisplay[8];
@@ -391,7 +389,7 @@ void perGameSettings (std::string filename) {
 		snd().playStartup();
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
-			bgOperations(true);
+			swiWaitForVBlank();
 		}
 		currentBg = 1;
 		displayGameIcons = false;
@@ -701,10 +699,10 @@ void perGameSettings (std::string filename) {
 	if (ms().theme == TWLSettings::EThemeHBL) {
 		dbox_showIcon = true;
 	} else if (ms().theme == TWLSettings::EThemeSaturn) {
-		while (!screenFadedIn()) { bgOperations(true); }
+		while (!screenFadedIn()) { swiWaitForVBlank(); }
 		dbox_showIcon = true;
 	} else {
-		while (!dboxStopped) { bgOperations(true); }
+		while (!dboxStopped) { swiWaitForVBlank(); }
 	}
 
 	setAsDonorRom = STR_SET_AS_DONOR_ROM;
@@ -955,7 +953,7 @@ void perGameSettings (std::string filename) {
 			scanKeys();
 			pressed = keysDown();
 			held = keysDownRepeat();
-			bgOperations(true);
+			swiWaitForVBlank();
 		} while (!held);
 
 		if (!showPerGameSettings) {
@@ -1210,7 +1208,7 @@ void perGameSettings (std::string filename) {
 	} else if (ms().theme == TWLSettings::EThemeSaturn) {
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
-			bgOperations(true);
+			swiWaitForVBlank();
 		}
 		clearText();
 		currentBg = 0;

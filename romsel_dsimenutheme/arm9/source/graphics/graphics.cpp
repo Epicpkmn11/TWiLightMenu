@@ -198,6 +198,8 @@ extern mm_sound_effect snd_stop;
 //extern mm_sound_effect snd_loading;
 extern mm_sound_effect mus_menu;
 
+void customSleep();
+
 void ClearBrightness(void) {
 	fadeType = true;
 	screenBrightness = 0;
@@ -395,6 +397,17 @@ void playRotatingCubesVideo(void) {
 void vBlankHandler() {
 	execQueue();		   // Execute any actions queued during last vblank.
 	execDeferredIconUpdates(); // Update any icons queued during last vblank.
+
+	// Do background updates
+	if (keysHeld() & KEY_LID) {
+		customSleep();
+	}
+	checkSdEject();
+	tex().drawVolumeImageCached();
+	tex().drawBatteryImageCached();
+	drawCurrentTime();
+	drawCurrentDate();
+	snd().updateStream();
 
 	if (waitForNeedToPlayStopSound > 0) {
 		waitForNeedToPlayStopSound++;

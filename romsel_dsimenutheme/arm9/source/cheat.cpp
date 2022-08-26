@@ -39,8 +39,6 @@
 
 extern bool dbox_showIcon;
 
-extern void bgOperations(bool waitFrame);
-
 CheatCodelist::~CheatCodelist(void) {}
 
 inline u32 gamecode(const char *aGameCode)
@@ -329,7 +327,7 @@ void CheatCodelist::selectCheats(std::string filename)
     while(1) {
       scanKeys();
       pressed = keysDownRepeat();
-      bgOperations(true);
+      swiWaitForVBlank();
       if(pressed & KEY_B) {
         snd().playBack();
         break;
@@ -384,7 +382,7 @@ void CheatCodelist::selectCheats(std::string filename)
           updateText(false);
         }
       }
-      bgOperations(true);
+      swiWaitForVBlank();
     } while(!pressed && !held);
 
     if(held & KEY_UP) {
@@ -514,7 +512,7 @@ void CheatCodelist::selectCheats(std::string filename)
         while(1) {
           scanKeys();
           pressed = keysDown();
-          bgOperations(true);
+          swiWaitForVBlank();
           if(pressed & KEY_B) {
             snd().playBack();
             break;
