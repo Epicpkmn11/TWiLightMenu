@@ -21,6 +21,7 @@
 
 #include "graphics/graphics.h"
 
+#include "common/argv.h"
 #include "common/twlmenusettings.h"
 #include "common/bootstrapsettings.h"
 #include "common/fatHeader.h"
@@ -1155,33 +1156,17 @@ int main(int argc, char **argv) {
 
 			// Construct a command line
 			getcwd(filePath, PATH_MAX);
-			int pathLen = strlen(filePath);
-			vector<char *> argarray;
+			std::vector<char *> argarray;
 
 			bool isArgv = false;
 			if (extension(filename, {".argv"})) {
-				ms().romPath[ms().secondaryDevice] = std::string(filePath) + std::string(filename);
-
-				FILE *argfile = fopen(filename.c_str(), "rb");
-				char str[PATH_MAX], *pstr;
-				const char seps[] = "\n\r\t ";
-
-				while (fgets(str, PATH_MAX, argfile)) {
-					// Find comment and end string there
-					if ((pstr = strchr(str, '#')))
-						*pstr = '\0';
-
-					// Tokenize arguments
-					pstr = strtok(str, seps);
-
-					while (pstr != NULL) {
-						argarray.push_back(strdup(pstr));
-						pstr = strtok(NULL, seps);
-					}
+				std::vector<std::string> argv = parseArgv(filename.c_str());
+				if(argv.size() > 0) {
+					filename = argv[0];
+					for(const std::string &arg : argv)
+						argarray.push_back(strdup(arg.c_str()));
+					isArgv = true;
 				}
-				fclose(argfile);
-				filename = argarray.at(0);
-				isArgv = true;
 			} else {
 				argarray.push_back(strdup(filename.c_str()));
 			}
@@ -1194,16 +1179,11 @@ int main(int argc, char **argv) {
 
 				std::string typeToReplace = filename.substr(filename.rfind('.'));
 
-				char *name = argarray.at(0);
-				strcpy(filePath + pathLen, name);
-				free(argarray.at(0));
-				argarray.at(0) = filePath;
-
 				std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romFolderNoSlash);
 				mkdir("saves", 0777);
 
-				ms().dsiWareSrlPath = std::string(argarray[0]);
+				ms().dsiWareSrlPath = argarray[0];
 				ms().dsiWarePubPath = romFolderNoSlash + "/saves/" + filename;
 				ms().dsiWarePrvPath = ms().dsiWarePubPath;
 				bool savFormat = (ms().secondaryDevice && (!sdFound() || !ms().dsiWareToSD || bs().b4dsMode));
@@ -1215,7 +1195,7 @@ int main(int argc, char **argv) {
 					ms().dsiWarePrvPath = replaceAll(ms().dsiWarePrvPath, typeToReplace, getPrvExtension());
 				}
 				if (!isArgv) {
-					ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
+					ms().romPath[ms().secondaryDevice] = argarray[0];
 				}
 				ms().homebrewBootstrap = isHomebrew[CURPOS];
 				ms().launchType[ms().secondaryDevice] = Launch::EDSiWareLaunch;
@@ -1509,7 +1489,7 @@ int main(int argc, char **argv) {
 						sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
 					}
 
-					argarray.at(0) = (char *)ndsToBoot;
+					argarray[0] = ndsToBoot;
 					snd().stopStream();
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true, false, -1);
 					char text[64];
@@ -1590,10 +1570,6 @@ int main(int argc, char **argv) {
 					ms().homebrewBootstrap = false;
 				}
 
-				char *name = argarray.at(0);
-				strcpy(filePath + pathLen, name);
-				free(argarray.at(0));
-				argarray.at(0) = filePath;
 				if (useBackend) {
 					if (((perGameSettings_useBootstrap == -1 ? ms().useBootstrap : perGameSettings_useBootstrap) || !ms().secondaryDevice) || (dsiFeatures() && unitCode[CURPOS] > 0 && (perGameSettings_dsiMode == -1 ? DEFAULT_DSI_MODE : perGameSettings_dsiMode))
 					|| (gameTid[CURPOS][0] == 'D' && unitCode[CURPOS] == 3)) {
@@ -1760,7 +1736,7 @@ int main(int argc, char **argv) {
 						}
 
 						if (!isArgv) {
-							ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
+							ms().romPath[ms().secondaryDevice] = argarray[0];
 						}
 						ms().homebrewHasWide = (isHomebrew[CURPOS] && gameTid[CURPOS][0] == 'W');
 						ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch; // 1
@@ -1809,26 +1785,26 @@ int main(int argc, char **argv) {
 								std::string fatPath = replaceAll(path, "sd:/", "fat:/");
 
 								err = bootstrapHbRunNdsFile (path.c_str(), fatPath.c_str(),
-								perGameSettings_ramDiskNo >= 0 ? ramdiskpath.c_str() : "sd:/null.img",
-								"sd:/snemulds.cfg",
-								perGameSettings_ramDiskNo >= 0 ? getFileSize(ramdiskpath.c_str()) : 0,
-								"sd:/_nds/nds-bootstrap/softResetParams.bin",
-								patchOffsetCacheFilePath,
-								getFileSize("sd:/snemulds.cfg"),
-								-1,
-								false,
-								argarray.size(),
-								(const char **)&argarray[0],
-								perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language,
-								perGameSettings_dsiMode == -1 ? isModernHomebrew[CURPOS] : perGameSettings_dsiMode,
-								perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu,
-								perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram,
-								ms().consoleModel, false);
+									perGameSettings_ramDiskNo >= 0 ? ramdiskpath.c_str() : "sd:/null.img",
+									"sd:/snemulds.cfg",
+									perGameSettings_ramDiskNo >= 0 ? getFileSize(ramdiskpath.c_str()) : 0,
+									"sd:/_nds/nds-bootstrap/softResetParams.bin",
+									patchOffsetCacheFilePath,
+									getFileSize("sd:/snemulds.cfg"),
+									-1,
+									false,
+									argarray.size(),
+									(const char **)&argarray[0],
+									perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language,
+									perGameSettings_dsiMode == -1 ? isModernHomebrew[CURPOS] : perGameSettings_dsiMode,
+									perGameSettings_boostCpu == -1 ? DEFAULT_BOOST_CPU : perGameSettings_boostCpu,
+									perGameSettings_boostVram == -1 ? DEFAULT_BOOST_VRAM : perGameSettings_boostVram,
+									ms().consoleModel, false);
 							} else {
 								err = 1;
 							}
 						} else {
-							argarray.at(0) = (char *)ndsToBoot;
+							argarray[0] = ndsToBoot;
 							err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true, false, -1);
 						}
 						char text[64];
@@ -1873,7 +1849,7 @@ int main(int argc, char **argv) {
 						runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true, false, -1);
 						stop();
 					} else {
-						ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
+						ms().romPath[ms().secondaryDevice] = argarray[0];
 						ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch;
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
@@ -1890,7 +1866,7 @@ int main(int argc, char **argv) {
 					}
 				} else {
 					if (!isArgv) {
-						ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
+						ms().romPath[ms().secondaryDevice] = argarray[0];
 					}
 					ms().homebrewHasWide = (isHomebrew[CURPOS] && (gameTid[CURPOS][0] == 'W' || romVersion[CURPOS] == 0x57));
 					ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardDirectLaunch;
@@ -2523,7 +2499,7 @@ int main(int argc, char **argv) {
 				if (!ms().btsrpBootloaderDirect && useNDSB) {
 					ndsToBoot = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 				}
-				argarray.at(0) = (char *)(tgdsMode ? tgdsNdsPath : ndsToBoot);
+				argarray[0] = (char *)(tgdsMode ? tgdsNdsPath : ndsToBoot);
 				snd().stopStream();
 
 				int err = 0;
@@ -2609,9 +2585,8 @@ int main(int argc, char **argv) {
 				stop();
 			}
 
-			while (argarray.size() != 0) {
-				free(argarray.at(0));
-				argarray.erase(argarray.begin());
+			for(char *arg : argarray) {
+				free(arg);
 			}
 		}
 	}

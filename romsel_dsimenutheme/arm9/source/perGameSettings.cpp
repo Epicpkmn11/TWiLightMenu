@@ -28,6 +28,7 @@
 #include "errorScreen.h"
 #include "gbaswitch.h"
 
+#include "common/argv.h"
 #include "common/inifile.h"
 #include "common/flashcard.h"
 #include "common/nds_loader_arm9.h"
@@ -396,27 +397,9 @@ void perGameSettings (std::string filename) {
 
 	std::string filenameForInfo = filename;
 	if (extension(filenameForInfo, {".argv"})) {
-		std::vector<char*> argarray;
-
-		FILE *argfile = fopen(filenameForInfo.c_str(),"rb");
-			char str[PATH_MAX], *pstr;
-		const char seps[]= "\n\r\t ";
-
-		while (fgets(str, PATH_MAX, argfile)) {
-			// Find comment and end string there
-			if ((pstr = strchr(str, '#')))
-				*pstr= '\0';
-
-			// Tokenize arguments
-			pstr = strtok(str, seps);
-
-			while (pstr != NULL) {
-				argarray.push_back(strdup(pstr));
-				pstr = strtok(NULL, seps);
-			}
-		}
-		fclose(argfile);
-		filenameForInfo = argarray.at(0);
+		std::vector<std::string> argv = parseArgv(filenameForInfo.c_str(), true);
+		if(argv.size() > 0)
+			filenameForInfo = argv[0];
 	}
 
 	FILE *f_nds_file = fopen(filenameForInfo.c_str(), "rb");

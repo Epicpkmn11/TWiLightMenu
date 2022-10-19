@@ -22,6 +22,7 @@
 ------------------------------------------------------------------*/
 
 #include "iconTitle.h"
+#include "common/argv.h"
 #include "common/twlmenusettings.h"
 #include "common/bootstrapsettings.h"
 #include "common/systemdetails.h"
@@ -335,71 +336,6 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		clearTitle(num);
 		if (customIcon[num] != 2)
 			clearBannerSequence(num); // banner sequence
-	} else if (extension(name, {".argv"})) {
-		// look through the argv file for the corresponding nds file
-		FILE *fp;
-		char *line = NULL, *p = NULL;
-		size_t size = 0;
-		ssize_t rc;
-
-		// open the argv file
-		fp = fopen(name, "rb");
-		if (fp == NULL) {
-			clearTitle(num);
-			clearBannerSequence(num);
-			fclose(fp);
-			return;
-		}
-
-		// read each line
-		while ((rc = __getline(&line, &size, fp)) > 0) {
-			// remove comments
-			if ((p = strchr(line, '#')) != NULL)
-				*p = 0;
-
-			// skip leading whitespace
-			for (p = line; *p && isspace((int)*p); ++p)
-				;
-
-			if (*p)
-				break;
-		}
-
-		// done with the file at this point
-		fclose(fp);
-
-		if (p && *p) {
-			// we found an argument
-			struct stat st;
-
-			// truncate everything after first argument
-			strtok(p, "\n\r\t ");
-
-			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
-				// let's see if this is a file or directory
-				rc = stat(p, &st);
-				if (rc != 0) {
-					// stat failed
-					clearTitle(num);
-					clearBannerSequence(num);
-				} else if (S_ISDIR(st.st_mode)) {
-					// this is a directory!
-					clearTitle(num);
-					clearBannerSequence(num);
-				} else {
-					getGameInfo(false, p, num);
-				}
-			} else {
-				// this is not an nds/app file!
-				clearTitle(num);
-				clearBannerSequence(num);
-			}
-		} else {
-			clearTitle(num);
-			clearBannerSequence(num);
-		}
-		// clean up the allocated line
-		free(line);
 	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
 		// this is an nds/app file!
 		FILE *fp;
@@ -589,6 +525,15 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				bnriconisDSi[num] = true;
 			}
 		}
+	} else if (extension(name, {".argv"})) {
+		std::vector<std::string> argv = parseArgv(name, true);
+		if (argv.size() > 0 && extension(argv[0], {".nds", ".dsi", ".ids", ".srl", ".app"})) {
+			getGameInfo(false, argv[0].c_str(), num);
+		} else {
+			clearTitle(num);
+			clearBannerSequence(num);
+		}
+		return;
 	}
 }
 
@@ -609,66 +554,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 		}
 	} else if (isDir) {
 		clearIcon(spriteIdx);
-	} else if (extension(name, {".argv"})) {
-		// look through the argv file for the corresponding nds file
-		FILE *fp;
-		char *line = NULL, *p = NULL;
-		size_t size = 0;
-		ssize_t rc;
-
-		// open the argv file
-		fp = fopen(name, "rb");
-		if (fp == NULL) {
-			clearIcon(spriteIdx);
-			fclose(fp);
-			return;
-		}
-
-		// read each line
-		while ((rc = __getline(&line, &size, fp)) > 0) {
-			// remove comments
-			if ((p = strchr(line, '#')) != NULL)
-				*p = 0;
-
-			// skip leading whitespace
-			for (p = line; *p && isspace((int)*p); ++p);
-
-			if (*p)
-				break;
-		}
-
-		// done with the file at this point
-		fclose(fp);
-
-		if (p && *p) {
-			// we found an argument
-			struct stat st;
-
-			// truncate everything after first argument
-			strtok(p, "\n\r\t ");
-
-			if (extension(p, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
-				// let's see if this is a file or directory
-				rc = stat(p, &st);
-				if (rc != 0) {
-					// stat failed
-					clearIcon(spriteIdx);
-				} else if (S_ISDIR(st.st_mode)) {
-					// this is a directory!
-					clearIcon(spriteIdx);
-				} else {
-					iconUpdate(false, p, spriteIdx);
-				}
-			} else {
-				// this is not an nds/app file!
-				clearIcon(spriteIdx);
-			}
-		} else {
-			clearIcon(spriteIdx);
-		}
-		// clean up the allocated line
-		free(line);
-	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app"})) {
+	} else if (extension(name, {".nds", ".dsi", ".ids", ".srl", ".app", ".argv"})) {
 		// this is an nds/app file!
 		sNDSBannerExt &ndsBanner = bnriconTile[num];
 		if (bnriconisDSi[num]) {
