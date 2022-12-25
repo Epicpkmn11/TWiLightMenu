@@ -30,7 +30,19 @@
 
 //#define EMULATE_FILES
 
-bool extension(const std::string_view filename, const std::vector<std::string_view> extensions);
+struct DirEntry {
+	DirEntry(std::string name, bool isDirectory, int position, int customPos) : name(name), isDirectory(isDirectory), position(position), customPos(customPos) {}
+	DirEntry() {}
+
+	std::string name;
+	bool isDirectory;
+	int position;
+	bool customPos;
+};
+
+bool extension(const std::string_view filename, const std::vector<std::string> extensions);
+
+void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<std::string_view> extensionList = {});
 
 std::string browseForFile(const std::vector<std::string_view> extensionList);
 

@@ -33,6 +33,7 @@
 #include "graphics/ThemeConfig.h"
 #include "graphics/ThemeTextures.h"
 #include "graphics/themefilenames.h"
+#include "loaders.h"
 
 #include "defaultSettings.h"
 #include "errorScreen.h"
@@ -1959,13 +1960,13 @@ int main(int argc, char **argv) {
 					stop();
 				}
 			} else {
-				bool useNDSB = false;
-				bool tgdsMode = false;
-				bool dsModeSwitch = false;
-				bool boostCpu = true;
-				bool boostVram = false;
-				bool tscTgds = false;
-				int romToRamDisk = -1;
+				// bool useNDSB = false;
+				// bool tgdsMode = false;
+				// bool dsModeSwitch = false;
+				// bool boostCpu = true;
+				// bool boostVram = false;
+				// bool tscTgds = false;
+				// int romToRamDisk = -1;
 
 				std::string romfolderNoSlash = ms().romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1979,28 +1980,29 @@ int main(int argc, char **argv) {
 				ms().previousUsedDevice = ms().secondaryDevice;
 				ms().homebrewBootstrap = true;
 
-				const char *ndsToBoot = "";
+				char ndsToBoot[PATH_MAX] = "";
 				std::string ndsToBootFat;
 				const char *tgdsNdsPath = "sd:/_nds/TWiLightMenu/apps/ToolchainGenericDS-multiboot.srl";
-				if (extension(filename, {".plg"})) {
-					ndsToBoot = "fat:/_nds/TWiLightMenu/bootplg.srldr";
-					dsModeSwitch = true;
 
-					// Print .plg path without "fat:" at the beginning
-					char ROMpathDS2[256];
-					if (ms().secondaryDevice) {
-						for (int i = 0; i < 252; i++) {
-							ROMpathDS2[i] = ROMpath[4+i];
-							if (ROMpath[4+i] == '\x00') break;
+				const Loader *loader = whichLoader(filename);
+				if (loader) {
+					// ms().launchType[ms().secondaryDevice] = Launch::ERVideoLaunch;
+
+					snprintf(ndsToBoot, sizeof(ndsToBoot), "%s:%s", (isDSiMode() && access(ndsToBoot, F_OK) == 0) ? "sd" : "fat", loader->path);
+
+					if (loader->dstwoPlg) {
+						// Print .plg path without "fat:" at the beginning
+						char ROMpathDS2[256];
+						if (ms().secondaryDevice) {
+							strcpy(ROMpathDS2, ROMpath + 4);
+						} else {
+							sprintf(ROMpathDS2, "/_nds/TWiLightMenu/tempPlugin.plg");
+							fcopy(ROMpath, "fat:/_nds/TWiLightMenu/tempPlugin.plg");
 						}
-					} else {
-						sprintf(ROMpathDS2, "/_nds/TWiLightMenu/tempPlugin.plg");
-						fcopy(ROMpath, "fat:/_nds/TWiLightMenu/tempPlugin.plg");
-					}
 
-					CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );
-					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
-					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
+						CIniFile dstwobootini("fat:/_dstwo/twlm.ini");
+						dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
+						dstwobootini.SaveIniFile("fat:/_dstwo/twlm.ini");
 				} else if (extension(filename, {".avi"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::ETunaViDSLaunch;
 
@@ -2009,14 +2011,10 @@ int main(int argc, char **argv) {
 						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/tuna-vids.nds";
 						boostVram = true;
 					}
-				} else if (extension(filename, {".rvid"})) {
-					ms().launchType[ms().secondaryDevice] = Launch::ERVideoLaunch;
-
-					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
-					if(!isDSiMode() || access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "fat:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
-						boostVram = true;
 					}
+				}
+
+				 if (extension(filename, {".rvid"})) {
 				} else if (extension(filename, {".fv"})) {
 					ms().launchType[ms().secondaryDevice] = Launch::EFastVideoLaunch;
 

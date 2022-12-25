@@ -34,25 +34,6 @@ int _cpcTexID;
 int _vidTexID;
 
 glImage _ndsIcon[NDS_ICON_BANK_COUNT][TWL_ICON_FRAMES];
-glImage _gbaIcon[(32 / 32) * (64 / 32)];
-glImage _gbcIcon[(32 / 32) * (64 / 32)];
-glImage _nesIcon[1];
-glImage _sgIcon[1];
-glImage _smsIcon[1];
-glImage _ggIcon[1];
-glImage _mdIcon[1];
-glImage _snesIcon[1];
-// glImage _msxIcon[1];
-glImage _plgIcon[1];
-glImage _a26Icon[1];
-glImage _colIcon[1];
-glImage _m5Icon[1];
-glImage _intIcon[1];
-glImage _pceIcon[1];
-glImage _wsIcon[1];
-glImage _ngpIcon[1];
-glImage _cpcIcon[1];
-glImage _vidIcon[1];
 
 static u8 clearTiles[(32 * 256) / 2] = {0};
 static u16 blackPalette[16 * 8] = {0};
@@ -63,44 +44,32 @@ static u16 blackPalette[16 * 8] = {0};
  * initialized, returns null.
  */
 const glImage *getIcon(int num) {
-	if (num == GBA_ICON)
-		return _gbaIcon;
-	if (num == GBC_ICON)
-		return _gbcIcon;
-	if (num == NES_ICON)
-		return _nesIcon;
-	if (num == SG_ICON)
-		return _smsIcon;
-	if (num == SMS_ICON)
-		return _smsIcon;
-	if (num == GG_ICON)
-		return _ggIcon;
-	if (num == MD_ICON)
-		return _mdIcon;
-	if (num == SNES_ICON)
-		return _snesIcon;
-	/*if (num == MSX_ICON)
-	    return _msxIcon;*/
-	if (num == PLG_ICON)
-		return _plgIcon;
-	if (num == A26_ICON)
-		return _a26Icon;
-	if (num == COL_ICON)
-	    return _colIcon;
-	if (num == M5_ICON)
-	    return _m5Icon;
-	if (num == INT_ICON)
-		return _intIcon;
-	if (num == PCE_ICON)
-		return _pceIcon;
-	if (num == WS_ICON)
-		return _wsIcon;
-	if (num == NGP_ICON)
-		return _ngpIcon;
-	if (num == CPC_ICON)
-		return _cpcIcon;
-	if (num == VID_ICON)
-		return _vidIcon;
+	// if (num == GBA_ICON)
+	// 	return _gbaIcon;
+	// if (num == GBC_ICON)
+	// 	return _gbcIcon;
+	// if (num == NES_ICON)
+	// 	return _nesIcon;
+	// if (num == SMS_ICON)
+	// 	return _smsIcon;
+	// if (num == GG_ICON)
+	// 	return _ggIcon;
+	// if (num == MD_ICON)
+	// 	return _mdIcon;
+	// if (num == SNES_ICON)
+	// 	return _snesIcon;
+	// /*if (num == MSX_ICON)
+	//     return _msxIcon;
+	// if (num == COL_ICON)
+	//     return _colIcon;*/
+	// if (num == PLG_ICON)
+	// 	return _plgIcon;
+	// if (num == A26_ICON)
+	// 	return _a26Icon;
+	// if (num == INT_ICON)
+	// 	return _intIcon;
+	// if (num == PCE_ICON)
+	// 	return _pceIcon;
 	if (BAD_ICON_IDX(num) || !initialized)
 		return NULL;
 	return _ndsIcon[num];
@@ -122,78 +91,50 @@ void glLoadTileSetIntoSlot(int num, int tile_wid, int tile_hei, int bmp_wid, int
 	glImage *sprite;
 
 	switch (num) {
-	case GBA_ICON:
-		textureID = _gbaTexID;
-		sprite = _gbaIcon;
-		break;
-	case GBC_ICON:
-		textureID = _gbcTexID;
-		sprite = _gbcIcon;
-		break;
-	case NES_ICON:
-		textureID = _nesTexID;
-		sprite = _nesIcon;
-		break;
-	case SG_ICON:
-		textureID = _sgTexID;
-		sprite = _sgIcon;
-		break;
-	case SMS_ICON:
-		textureID = _smsTexID;
-		sprite = _smsIcon;
-		break;
-	case GG_ICON:
-		textureID = _ggTexID;
-		sprite = _ggIcon;
-		break;
-	case MD_ICON:
-		textureID = _mdTexID;
-		sprite = _mdIcon;
-		break;
-	case SNES_ICON:
-		textureID = _snesTexID;
-		sprite = _snesIcon;
-		break;
-	case PLG_ICON:
-		textureID = _plgTexID;
-		sprite = _plgIcon;
-		break;
-	case A26_ICON:
-		textureID = _a26TexID;
-		sprite = _a26Icon;
-		break;
-	case COL_ICON:
-		textureID = _colTexID;
-		sprite = _colIcon;
-		break;
-	case M5_ICON:
-		textureID = _m5TexID;
-		sprite = _m5Icon;
-		break;
-	case INT_ICON:
-		textureID = _intTexID;
-		sprite = _intIcon;
-		break;
-	case PCE_ICON:
-		textureID = _pceTexID;
-		sprite = _pceIcon;
-		break;
-	case WS_ICON:
-		textureID = _wsTexID;
-		sprite = _wsIcon;
-		break;
-	case NGP_ICON:
-		textureID = _ngpTexID;
-		sprite = _ngpIcon;
-		break;
-	case CPC_ICON:
-		textureID = _cpcTexID;
-		sprite = _cpcIcon;
-		break;
-	case VID_ICON:
-		textureID = _vidTexID;
-		sprite = _vidIcon;
-		break;
+	// case GBA_ICON:
+	// 	textureID = _gbaTexID;
+	// 	sprite = _gbaIcon;
+	// 	break;
+	// case GBC_ICON:
+	// 	textureID = _gbcTexID;
+	// 	sprite = _gbcIcon;
+	// 	break;
+	// case NES_ICON:
+	// 	textureID = _nesTexID;
+	// 	sprite = _nesIcon;
+	// 	break;
+	// case SMS_ICON:
+	// 	textureID = _smsTexID;
+	// 	sprite = _smsIcon;
+	// 	break;
+	// case GG_ICON:
+	// 	textureID = _ggTexID;
+	// 	sprite = _ggIcon;
+	// 	break;
+	// case MD_ICON:
+	// 	textureID = _mdTexID;
+	// 	sprite = _mdIcon;
+	// 	break;
+	// case SNES_ICON:
+	// 	textureID = _snesTexID;
+	// 	sprite = _snesIcon;
+	// 	break;
+	// case PLG_ICON:
+	// 	textureID = _plgTexID;
+	// 	sprite = _plgIcon;
+	// 	break;
+	// case A26_ICON:
+	// 	textureID = _a26TexID;
+	// 	sprite = _a26Icon;
+	// 	break;
+	// case INT_ICON:
+	// 	textureID = _intTexID;
+	// 	sprite = _intIcon;
+	// 	break;
+	// case PCE_ICON:
+	// 	textureID = _pceTexID;
+	// 	sprite = _pceIcon;
+	// 	break;
 	default:
 		if (BAD_ICON_IDX(num))
 			return;

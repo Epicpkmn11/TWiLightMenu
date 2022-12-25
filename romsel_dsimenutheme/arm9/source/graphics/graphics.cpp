@@ -48,6 +48,7 @@
 #include "ThemeConfig.h"
 #include "themefilenames.h"
 #include "tool/colortool.h"
+#include "loaders.h"
 //#include "tool/logging.h"
 
 #include "uvcoord_date_time_font.h"
@@ -749,11 +750,50 @@ void vBlankHandler() {
 							glSprite(spawnedboxXpos - titleboxXpos[ms().secondaryDevice],
 									 (titleboxYpos - 1) + titleboxYposDropDown[i % 5],
 									 GL_FLIP_NONE, &tex().settingsImage()[1]);
-						else
+						else if (romLoader[i] == LOADER_NDS)
 							drawRomIcon(iconXpos - titleboxXpos[ms().secondaryDevice],
 										(titleboxYpos + 12) + titleboxYposDropDown[i % 5],
 										i,
 										bnrRomType[i]);
+						else
+							drawIcon(iconXpos - titleboxXpos[ms().secondaryDevice],
+									 (titleboxYpos + 12) + titleboxYposDropDown[i % 5],
+									 40 + i);
+							drawIconINT(iconXpos - titleboxXpos[ms().secondaryDevice],
+										(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+						// else if (romLoader[i] == 11)
+						// 	drawIconPCE(iconXpos - titleboxXpos[ms().secondaryDevice],
+						// 				(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+						// else if (romLoader[i] == 10)
+						// 	drawIconA26(iconXpos - titleboxXpos[ms().secondaryDevice],
+						// 				(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+						// else if (romLoader[i] == 9)
+						// 	drawIconPLG(iconXpos - titleboxXpos[ms().secondaryDevice],
+						// 				(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+						// else if (romLoader[i] == 8)
+						// 	drawIconSNES(iconXpos - titleboxXpos[ms().secondaryDevice],
+						// 				 (titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+						// else if (romLoader[i] == 7)
+						// 	drawIconMD(iconXpos - titleboxXpos[ms().secondaryDevice],
+						// 			   (titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+						// else if (romLoader[i] == 6)
+						// 	drawIconGG(iconXpos - titleboxXpos[ms().secondaryDevice],
+						// 			   (titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+						// else if (romLoader[i] == 5)
+						// 	drawIconSMS(iconXpos - titleboxXpos[ms().secondaryDevice],
+						// 				(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+						// else if (romLoader[i] == 4)
+						// 	drawIconNES(iconXpos - titleboxXpos[ms().secondaryDevice],
+						// 				(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+						// else if (romLoader[i] == 3)
+						// 	drawIconGBC(iconXpos - titleboxXpos[ms().secondaryDevice],
+						// 				(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+						// else if (romLoader[i] == 2)
+						// 	drawIconGB(iconXpos - titleboxXpos[ms().secondaryDevice],
+						// 			   (titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+						// else if (romLoader[i] == 1)
+						// 	drawIconGBA(iconXpos - titleboxXpos[ms().secondaryDevice],
+						// 				(titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
 					}
 				} else {
 					// Empty box
@@ -795,6 +835,30 @@ void vBlankHandler() {
 						glSprite(96,
 								 (titleboxYpos - 1) - movingAppYpos + titleboxYposDropDown[movingApp % 5],
 								 GL_FLIP_NONE, &tex().settingsImage()[1]);
+					else if (bnrRomType[movingApp] == 12)
+						drawIconINT(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 11)
+						drawIconPCE(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 10)
+						drawIconA26(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 9)
+						drawIconPLG(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 8)
+						drawIconSNES(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 7)
+						drawIconMD(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 6)
+						drawIconGG(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 5)
+						drawIconSMS(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 4)
+						drawIconNES(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 3)
+						drawIconGBC(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 2)
+						drawIconGB(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
+					else if (bnrRomType[movingApp] == 1)
+						drawIconGBA(112, (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5]);
 					else
 						drawRomIcon(112,
 								    (titleboxYpos + 12) - movingAppYpos + titleboxYposDropDown[movingApp % 5],
@@ -864,6 +928,30 @@ void vBlankHandler() {
 				}
 				if (bnrSysSettings[CURPOS])
 					glSprite(84, 83 - titleboxYmovepos, GL_FLIP_NONE, &tex().settingsImage()[1]);
+				else if (bnrRomType[CURPOS] == 12)
+					drawIconINT(112, 96 - titleboxYmovepos);
+				else if (bnrRomType[CURPOS] == 11)
+					drawIconPCE(112, 96 - titleboxYmovepos);
+				else if (bnrRomType[CURPOS] == 10)
+					drawIconA26(112, 96 - titleboxYmovepos);
+				else if (bnrRomType[CURPOS] == 9)
+					drawIconPLG(112, 96 - titleboxYmovepos);
+				else if (bnrRomType[CURPOS] == 8)
+					drawIconSNES(112, 96 - titleboxYmovepos);
+				else if (bnrRomType[CURPOS] == 7)
+					drawIconMD(112, 96 - titleboxYmovepos);
+				else if (bnrRomType[CURPOS] == 6)
+					drawIconGG(112, 96 - titleboxYmovepos);
+				else if (bnrRomType[CURPOS] == 5)
+					drawIconSMS(112, 96 - titleboxYmovepos);
+				else if (bnrRomType[CURPOS] == 4)
+					drawIconNES(112, 96 - titleboxYmovepos);
+				else if (bnrRomType[CURPOS] == 3)
+					drawIconGBC(112, 96 - titleboxYmovepos);
+				else if (bnrRomType[CURPOS] == 2)
+					drawIconGB(112, 96 - titleboxYmovepos);
+				else if (bnrRomType[CURPOS] == 1)
+					drawIconGBA(112, 96 - titleboxYmovepos);
 				else
 					drawRomIcon(112, 96 - titleboxYmovepos, CURPOS, bnrRomType[CURPOS]);
 			}

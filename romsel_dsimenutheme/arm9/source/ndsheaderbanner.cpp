@@ -539,7 +539,6 @@ int bannerFlip[41] = {GL_FLIP_NONE};
 // bnriconisDSi[]
 bool isDirectory[40] = {false};
 bool bnrSysSettings[41] = {false};
-int bnrRomType[41] = {0};
 bool bnriconisDSi[41] = {false};
 int bnrWirelessIcon[41] = {0}; // 0 = None, 1 = Local, 2 = WiFi
 bool isDSiWare[41] = {false};
@@ -549,6 +548,7 @@ bool requiresRamDisk[41] = {false};
 int requiresDonorRom[41] = {0};
 int customIcon[41];							// 0 = None, 1 = png, 2 = banner.bin, -1 = error
 char customIconPath[256];
+int romLoader[41] = {0};
 
 static u16 bannerDelayNum[41] = {0x0000};
 int currentbnriconframeseq[41] = {0};

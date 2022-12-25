@@ -287,7 +287,6 @@ extern int bannerFlip[41];
 // bnriconisDSi[]
 extern bool isDirectory[40];
 extern bool bnrSysSettings[41];
-extern int bnrRomType[41];
 extern bool bnriconisDSi[41];
 extern int bnrWirelessIcon[41];	// 0 = None, 1 = Local, 2 = WiFi
 extern bool isDSiWare[41];
@@ -297,6 +296,7 @@ extern bool requiresRamDisk[41];
 extern int requiresDonorRom[41];
 extern int customIcon[41];
 extern char customIconPath[256];
+extern int romLoader[41];
 
 /**
  * Get banner sequence from banner file.
